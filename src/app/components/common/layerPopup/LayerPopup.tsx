@@ -7,7 +7,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogClose,
-} from "@/components/ui/dialog";
+} from "@/app/components/common/dialog";
 
 type LayerPopupProps = {
   open: boolean;
