@@ -1,33 +1,41 @@
-import type { Metadata } from "next";
-import "./globals.css";
-import BottomBar from "./components/common/bottomBar";
-import TopBar from "./components/common/topBar";
+import type {Metadata} from 'next';
+import './globals.css';
+import BottomBar from './components/common/bottomBar';
+import TopBar from './components/common/topBar';
 
+// 메타 데이터
 export const metadata: Metadata = {
-  title: "모여요",
-  description: "모임 시간을 쉽게 잡는 서비스",
+  title: '모여요',
+  description: '모임 시간을 쉽게 잡는 서비스',
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+// 공통 레이아웃
+export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
     <html lang="ko">
-      <body className="antialiased bg-background">
-        {/* 전체 모바일 프레임 */}
-        <div className="w-full max-w-sm mx-auto min-h-dvh flex flex-col bg-background">
-          
-          {/* 상단 헤더 */}
-          <TopBar />
+      <head>
+        {/* Google Fonts Preload */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap"
+          rel="stylesheet"
+        />
+      </head>
 
+      <body className="antialiased bg-blue-50">
+        {/* 전체 모바일 프레임 */}
+        <div className="flex flex-col w-full max-w-sm mx-auto min-h-dvh font-suit bg-background">
           {/* 메인 콘텐츠(스크롤 가능) */}
-          <main className="flex-1 overflow-y-auto px-4 pb-20">
+          <main className="flex-1 overflow-auto p-4 bg-background">
             {children}
           </main>
 
-          {/* 하단 네비게이션 */}
+          {/* 하단 네비 */}
           <BottomBar />
         </div>
       </body>
