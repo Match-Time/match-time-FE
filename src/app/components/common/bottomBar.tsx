@@ -19,7 +19,7 @@ const BottomNav = () => {
       label: '모임',
       activeSrc: '/images/icon_group_yellow.png',
       inactiveSrc: '/images/icon_group_gray.png',
-      path: '/',
+      path: '/group',
     },
     {
       label: '내 정보',
