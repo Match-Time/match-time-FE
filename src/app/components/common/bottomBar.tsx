@@ -19,7 +19,7 @@ const BottomNav = () => {
       label: '모임',
       activeSrc: '/images/icon_group_yellow.png',
       inactiveSrc: '/images/icon_group_gray.png',
-      path: '/',
+      path: '/group',
     },
     {
       label: '내 정보',
@@ -30,7 +30,7 @@ const BottomNav = () => {
   ];
 
   return (
-    <nav className="fixed bottom-0  w-full max-w-sm h-[70px] bg-white flex justify-around items-center">
+    <nav className="h-[70px] bg-white flex justify-around items-center">
       {menus.map((item) => {
         const isActive = pathname === item.path;
 
@@ -49,7 +49,7 @@ const BottomNav = () => {
             />
             <span
               className={`mt-1 text-sm ${
-                isActive ? 'text-[#FFCA3A] font-semibold' : 'text-gray-400'
+                isActive ? 'text-[#FFCA3A] font-semibold' : 'gray-medium'
               }`}
             >
               {item.label}
