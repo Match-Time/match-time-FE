@@ -1,6 +1,6 @@
 import type {Metadata} from 'next';
 import './globals.css';
-import BottomBar from './components/common/bottomBar';
+import ConditionalBottomBar from './components/common/ConditionalBottomBar';
 import TopBar from './components/common/topBar';
 
 // 메타 데이터
@@ -31,12 +31,10 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
         {/* 전체 모바일 프레임 */}
         <div className="flex flex-col w-full max-w-sm mx-auto min-h-dvh font-suit bg-background">
           {/* 메인 콘텐츠(스크롤 가능) */}
-          <main className="flex-1 overflow-auto p-4 bg-white">
-            {children}
-          </main>
+          <main className="flex-1 overflow-auto p-4 bg-white">{children}</main>
 
           {/* 하단 네비 */}
-          <BottomBar />
+          <ConditionalBottomBar />
         </div>
       </body>
     </html>
