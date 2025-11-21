@@ -152,16 +152,16 @@ export default function GroupDetailPage() {
 
   return (
     <div className="flex flex-col h-full bg-white">
-      <header className="relative flex items-center justify-center mb-4 px-4 h-14">
-        <Link href="/group" className="absolute left-4">
+      <header className="relative flex items-center justify-center mb-8">
+        <Link href="/group" className="absolute left-0">
           <Image
             src="/images/ic_back.png"
             alt="뒤로가기"
-            width={24}
-            height={24}
+            width={18}
+            height={30}
           />
         </Link>
-        <h1 className="text-lg font-semibold">{roomInfo?.name ?? '모임'}</h1>
+        <h1 className="text-lg font-semibold">모임 상세 정보</h1>
       </header>
 
       <main className="flex-1 overflow-y-auto pt-4">
@@ -195,17 +195,6 @@ export default function GroupDetailPage() {
                 alt="공유"
                 width={17}
                 height={17}
-              />
-            </button>
-            <button
-              onClick={() => setIsParticipantSheetOpen(true)}
-              className="w-10 h-10 bg-yellow-light rounded-full flex items-center justify-center"
-            >
-              <Image
-                src="/images/icon_group_yellow.png"
-                alt="참여자"
-                width={20}
-                height={20}
               />
             </button>
           </div>
