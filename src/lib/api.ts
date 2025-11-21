@@ -12,10 +12,10 @@ const API_BASE =
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
-interface ApiOptions extends RequestInit {
+type ApiOptions = Omit<RequestInit, 'body' | 'method'> & {
   method?: HttpMethod;
   body?: unknown;
-}
+};
 
 async function request<T>(path: string, options: ApiOptions = {}): Promise<T> {
   const url = `${API_BASE}${path}`;
