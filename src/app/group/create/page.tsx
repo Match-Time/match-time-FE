@@ -42,7 +42,7 @@ export default function CreateGroupPage() {
       });
       await joinRoom(stored.id, room.id);
       router.push(`/group/${room.id}/month`);
-    } catch (err: any) {
+    } catch (err: Error) {
       setError(err.message || '방을 만들지 못했습니다.');
     } finally {
       setLoading(false);

@@ -1,7 +1,6 @@
 import type {Metadata} from 'next';
 import './globals.css';
 import ConditionalBottomBar from './components/common/ConditionalBottomBar';
-import TopBar from './components/common/topBar';
 
 // 메타 데이터
 export const metadata: Metadata = {

@@ -2,7 +2,7 @@
 
 import {useEffect, useState} from 'react';
 import {isSameDay} from 'date-fns';
-import {Pencil, Check} from 'lucide-react';
+import {Pencil, Check, ChevronRight} from 'lucide-react';
 import ScheduleCalendar from '@/app/components/calendar/ScheduleCalendar';
 import {
   fetchUserMonthlyUnavailable,
@@ -42,9 +42,7 @@ export default function MyMonthPage() {
       setLoading(true);
       try {
         const dates = await fetchUserMonthlyUnavailable(stored.id);
-        setUnavailableDays(
-          dates.map((d) => fromISO(d)),
-        );
+        setUnavailableDays(dates.map((d) => fromISO(d)));
         setError(null);
       } catch (err: any) {
         setError(err.message || '불가능 날짜를 불러오지 못했습니다.');
@@ -100,14 +98,19 @@ export default function MyMonthPage() {
 
   return (
     <div className="flex flex-col h-full bg-white">
-      <header className="flex items-center justify-between px-4 h-14 bg-white border-b">
-        <h1 className="text-xl font-bold">내 일정표</h1>
+      {/* Custom Header */}
+      <header className="px-4 h-14 pb-2 pt-8 bg-white flex items-center">
+        <h1 className="text-3xl font-bold">내 고정 일정표</h1>
+      </header>
+
+      {/* Header 바로 아래 버튼 */}
+      <div className="flex justify-end px-4 mt-3">
         <button
           onClick={handleEditToggle}
           className={`flex items-center px-3 py-1.5 rounded-full text-sm font-semibold transition-colors ${
             isEditing
               ? 'bg-green-light text-green-main'
-              : 'bg-yellow-main text-black'
+              : 'bg-yellow-main text-white'
           }`}
           disabled={saving || loading}
         >
@@ -116,9 +119,14 @@ export default function MyMonthPage() {
           ) : (
             <Pencil size={16} className="mr-1" />
           )}
-          {isEditing ? (saving ? '저장 중...' : '고정표 수정 완료') : '고정표 수정하기'}
+          {isEditing
+            ? saving
+              ? '저장 중...'
+              : '일정 수정 완료'
+            : '일정 수정하기'}
+          {!isEditing && <ChevronRight size={16} className="ml-2" />}
         </button>
-      </header>
+      </div>
 
       <main className="flex-1 flex flex-col p-4 space-y-4">
         {error && <p className="text-sm text-red-main mb-3">{error}</p>}
@@ -127,7 +135,7 @@ export default function MyMonthPage() {
         ) : (
           <ScheduleCalendar
             month={month}
-            onMonthChange={setMonth}
+            onMonthChange={isEditing ? setMonth : () => {}}
             selectedDays={unavailableDays}
             onDayClick={handleDayClick}
             isEditing={isEditing}
@@ -135,7 +143,7 @@ export default function MyMonthPage() {
         )}
 
         {isEditing && (
-          <div className="p-3 bg-yellow-main text-center text-sm text-black rounded-lg shadow-sm">
+          <div className="py-1 bg-gradient-to-l from-yellow-main to-yellow-light text-center text-sm text-white rounded-lg shadow-sm">
             <p>불가능한 날짜를 선택해 주세요! 연속 날짜도 가능해요.</p>
           </div>
         )}

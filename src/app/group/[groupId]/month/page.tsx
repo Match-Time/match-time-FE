@@ -1,8 +1,9 @@
 'use client';
 
+import Image from 'next/image';
+import Link from 'next/link';
 import {useEffect, useState} from 'react';
 import {isSameDay} from 'date-fns';
-import TopBar from '@/app/components/common/topBar';
 import ScheduleCalendar from '@/app/components/calendar/ScheduleCalendar';
 import {useParams, useRouter, useSearchParams} from 'next/navigation';
 import {
@@ -50,17 +51,18 @@ export default function MonthPage() {
     const load = async () => {
       setLoading(true);
       try {
-        const roomDates = await fetchRoomMonthlyUnavailable(stored.id, groupIdNum);
+        const roomDates = await fetchRoomMonthlyUnavailable(
+          stored.id,
+          groupIdNum
+        );
         const baseDates =
           roomDates.length > 0
             ? roomDates
             : await fetchUserMonthlyUnavailable(stored.id);
 
-        setUnavailableDays(
-          baseDates.map((d) => fromISO(d)),
-        );
+        setUnavailableDays(baseDates.map((d) => fromISO(d)));
         setError(null);
-      } catch (err: any) {
+      } catch (err: Error) {
         setError(err.message || '불가능 날짜를 불러오지 못했습니다.');
       } finally {
         setLoading(false);
@@ -96,7 +98,7 @@ export default function MonthPage() {
       await saveRoomMonthlyUnavailable(stored.id, groupIdNum, payload);
       setError(null);
       router.push(`/group/${groupId}`);
-    } catch (err: any) {
+    } catch (err: Error) {
       setError(err.message || '저장에 실패했습니다.');
     } finally {
       setSaving(false);
@@ -108,14 +110,25 @@ export default function MonthPage() {
   }
 
   return (
-    <div className="flex flex-col h-full bg-white">
-      <TopBar title="불가능 날짜 선택" />
+    <div className="flex flex-col h-full">
+      <header className="relative flex items-center justify-center mb-8">
+        <Link href={`/group/${groupId}`} className="absolute left-0">
+          <Image
+            src="/images/ic_back.png"
+            alt="뒤로가기"
+            width={18}
+            height={30}
+          />
+        </Link>
+        <h1 className="text-lg font-semibold">불가능 날짜 선택</h1>
+      </header>
 
-      <main className="flex-1 overflow-y-auto px-4 pt-4">
-        <div className="mb-4 px-4">
-          <p className="text-lg font-bold text-gray-dark mb-1">내 고정 시간표에서</p>
-          <p className="text-lg font-bold text-gray-dark mb-2">
-            불가능한 날짜를 <span className="text-yellow-main">수정</span>해 보세요.
+      <main className="flex-1 overflow-y-auto pt-4">
+        <div className="mb-4 px-2">
+          <p className="text-xl font-bold text-black ">내 고정 시간표에서</p>
+          <p className="text-xl font-bold text-black mb-2">
+            불가능한 날짜를 <span className="text-yellow-main">수정</span>해
+            보세요.
           </p>
           <p className="text-sm text-gray-medium">
             현재 수정하는 사항은 이 모임에만 적용돼요.

@@ -31,7 +31,7 @@ export default function InviteJoinPage() {
         setStatus('success');
         setMessage('참여 완료! 이동합니다...');
         router.push(target ? `/group/${target.id}` : '/group');
-      } catch (err: any) {
+      } catch (err: Error) {
         setStatus('error');
         setMessage(err.message || '참여에 실패했습니다.');
       }

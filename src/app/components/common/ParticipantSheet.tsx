@@ -5,7 +5,6 @@ import * as DialogPrimitive from '@radix-ui/react-dialog';
 import Image from 'next/image';
 import {cn} from '@/lib/utils';
 import {X} from 'lucide-react';
-import Tag from './Tag';
 import {fetchRoomUsers, User} from '@/lib/api';
 
 const Dialog = DialogPrimitive.Root;
@@ -72,7 +71,7 @@ export function ParticipantSheet({
         const users = await fetchRoomUsers(roomId);
         setParticipants(users);
         setError(null);
-      } catch (err: any) {
+      } catch (err: Error) {
         setError(err.message || '참여자를 불러오지 못했습니다.');
       } finally {
         setLoading(false);

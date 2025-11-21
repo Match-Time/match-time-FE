@@ -111,11 +111,29 @@ export default function GroupDetailPage() {
     [displayedDates]
   );
 
+  const sortedDates = useMemo(() => {
+    if (!confirmedDate) {
+      return displayedDates;
+    }
+    const confirmedItem = displayedDates.find(d => d.date === confirmedDate);
+    if (!confirmedItem) {
+      return displayedDates;
+    }
+    const otherItems = displayedDates.filter(d => d.date !== confirmedDate);
+    return [confirmedItem, ...otherItems];
+  }, [displayedDates, confirmedDate]);
+
   const handleConfirmDate = async () => {
     if (!selectedDate || !roomInfo) return;
     setSaving(true);
     try {
-      const payload: any = {type: roomInfo.type as RoomType};
+      const payload: {
+        type: RoomType;
+        date?: string;
+        day?: string;
+        start?: string;
+        end?: string;
+      } = {type: roomInfo.type as RoomType};
       if (roomInfo.type === 'ONCE') {
         payload.date = selectedDate;
       } else {
@@ -129,7 +147,6 @@ export default function GroupDetailPage() {
       setConfirmedDate(selectedDate);
       setError(null);
 
-      // 위치가 튀지 않도록 순서를 유지한 채 상태만 갱신
       setIsBouncing(false);
     } catch (err: any) {
       setError(err.message || '확정에 실패했습니다.');
@@ -216,7 +233,7 @@ export default function GroupDetailPage() {
           ) : (
             <div className="space-y-8">
               <AnimatePresence>
-                {displayedDates.map((item, index) => {
+                {sortedDates.map((item, index) => {
                   const isMax = item.availableCount === maxAvailableCount;
                   const bgColorClass = isMax
                     ? 'bg-yellow-light'

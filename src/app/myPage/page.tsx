@@ -3,7 +3,7 @@
 import {useEffect, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import Image from 'next/image';
-import {Pencil, UserCog, Info} from 'lucide-react';
+import {UserCog, Info} from 'lucide-react';
 import SettingMenuItem from '@/app/components/common/SettingMenuItem';
 import {getUser, saveUser} from '@/lib/userStorage';
 import {updateUserNickname} from '@/lib/api';
@@ -37,7 +37,7 @@ export default function MyPage() {
       saveUser({id: updated.id, email: updated.email, nickname: updated.nickname});
       setNickname(updated.nickname);
       setError(null);
-    } catch (err: any) {
+    } catch (err: Error) {
       setError(err.message || '닉네임을 변경하지 못했습니다.');
     }
   };

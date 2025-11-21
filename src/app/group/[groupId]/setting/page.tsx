@@ -63,7 +63,7 @@ export default function GroupSettingPage() {
       await updateRoomName(groupIdNum, newGroupName.trim());
       setError(null);
       setIsNameDialogOpen(false);
-    } catch (err: any) {
+    } catch (err: Error) {
       setError(err.message || '이름을 변경하지 못했습니다.');
     } finally {
       setSaving(false);
@@ -76,12 +76,11 @@ export default function GroupSettingPage() {
       router.push('/group');
       return;
     }
-    // eslint-disable-next-line no-alert
     if (window.confirm('정말로 모임을 나가시겠습니까?')) {
       try {
         await leaveRoom(stored.id, groupIdNum);
         router.push('/group'); // 목록으로 이동
-      } catch (err: any) {
+      } catch (err: Error) {
         setError(err.message || '모임 나가기에 실패했습니다.');
       }
     }

@@ -44,7 +44,7 @@ export default function GroupPage() {
         );
         setItems(withCounts);
         setError(null);
-      } catch (err: any) {
+      } catch (err: Error) {
         setError(err.message || '방 목록을 불러오지 못했습니다.');
       } finally {
         setLoading(false);

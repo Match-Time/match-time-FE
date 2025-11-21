@@ -31,7 +31,7 @@ export default function Page() {
 
       saveUser({id: user.id, email: user.email, nickname: user.nickname});
       router.push('/group');
-    } catch (err: any) {
+    } catch (err: Error) {
       setError(err.message || '로그인에 실패했습니다.');
     } finally {
       setLoading(false);

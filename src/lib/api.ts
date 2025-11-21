@@ -14,7 +14,7 @@ type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
 interface ApiOptions extends RequestInit {
   method?: HttpMethod;
-  body?: any;
+  body?: unknown;
 }
 
 async function request<T>(path: string, options: ApiOptions = {}): Promise<T> {

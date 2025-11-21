@@ -39,7 +39,7 @@ export default function ScheduleCalendar({
     sunday: 'text-[#e94a4a]',
   };
 
-  const disabledBeforeToday = { before: today };
+
 
   return (
     <DayPicker
@@ -50,6 +50,7 @@ export default function ScheduleCalendar({
       month={month}
       onMonthChange={onMonthChange}
       showOutsideDays
+      disabled={!isEditing}
       //disabled={disabledBeforeToday}
       modifiers={modifiers}
       modifiersClassNames={modifiersClassNames}
@@ -104,9 +105,9 @@ export default function ScheduleCalendar({
         /** 헤더 / 네비게이션 */
         caption: { alignItems: 'center', color: yellow },
         caption_label: { fontWeight: 800, fontSize: '18px', color: yellow },
-        nav_button: { color: yellow, border: 'none', background: 'transparent' },
-        nav_button_previous: { color: '#c8c8c8' },
-        nav_button_next: { color: yellow },
+        nav_button: { color: isEditing ? yellow : '#c8c8c8', border: 'none', background: 'transparent' },
+        nav_button_previous: { color: isEditing ? '#c8c8c8' : '#e0e0e0' },
+        nav_button_next: { color: isEditing ? yellow : '#e0e0e0' },
 
         head_cell: { fontWeight: 700 },
         table: { borderSpacing: '10px 10px' },

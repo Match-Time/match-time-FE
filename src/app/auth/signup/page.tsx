@@ -22,7 +22,7 @@ export default function Page() {
       const user = await createUser({email, password, nickname});
       saveUser({id: user.id, email: user.email, nickname: user.nickname});
       router.push('/group');
-    } catch (err: any) {
+    } catch (err: Error) {
       setError(err.message || '회원가입에 실패했습니다.');
     } finally {
       setLoading(false);
