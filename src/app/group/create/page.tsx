@@ -25,13 +25,13 @@ export default function CreateGroupPage() {
   return (
     <div className="flex flex-col h-full">
       {/* Top Bar */}
-      <header className="relative flex items-center justify-center mb-4">
+      <header className="relative flex items-center justify-center mb-8">
         <Link href="/group" className="absolute left-0">
           <Image
             src="/images/ic_back.png"
             alt="뒤로가기"
-            width={24}
-            height={24}
+            width={15}
+            height={30}
           />
         </Link>
         <h1 className="text-lg font-semibold">모임 기본 정보 입력</h1>
