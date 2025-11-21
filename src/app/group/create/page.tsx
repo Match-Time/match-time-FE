@@ -30,7 +30,7 @@ export default function CreateGroupPage() {
           <Image
             src="/images/ic_back.png"
             alt="뒤로가기"
-            width={24}
+            width={15}
             height={30}
           />
         </Link>

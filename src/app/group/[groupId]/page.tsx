@@ -78,11 +78,11 @@ export default function GroupDetailPage() {
           <Image
             src="/images/ic_back.png"
             alt="뒤로가기"
-            width={24}
-            height={24}
+            width={15}
+            height={30}
           />
         </Link>
-        <h1 className="text-lg font-semibold">{groupInfo.name}</h1>
+        <h1 className="text-lg font-semibold">모임 세부 정보</h1>
       </header>
 
       <main className="flex-1 overflow-y-auto pt-4">
