@@ -1,6 +1,6 @@
 import type {Metadata} from 'next';
 import './globals.css';
-import BottomBar from './components/common/bottomBar';
+import ConditionalBottomBar from './components/common/ConditionalBottomBar';
 import TopBar from './components/common/topBar';
 
 // 메타 데이터
@@ -34,7 +34,7 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
           <main className="flex-1 overflow-auto p-4 bg-white">{children}</main>
 
           {/* 하단 네비 */}
-          <BottomBar />
+          <ConditionalBottomBar />
         </div>
       </body>
     </html>
