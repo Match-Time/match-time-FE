@@ -2,20 +2,19 @@
 
 /**
  * Lightweight fetch wrapper for the Spring backend.
- * All endpoints are assumed to live under the same origin unless
- * NEXT_PUBLIC_API_BASE is provided.
+ * To avoid CORS in production, we default to same-origin requests and rely on
+ * Next.js rewrites (see next.config.ts) to proxy `/api/*` to the backend.
+ * If you really need to target a different origin, set NEXT_PUBLIC_API_BASE.
  */
 
-const API_BASE =
-  process.env.NEXT_PUBLIC_API_BASE ||
-  'https://matchtime-app-purple-firefly-5004.fly.dev';
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || '';
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
-interface ApiOptions extends RequestInit {
+type ApiOptions = Omit<RequestInit, 'body' | 'method'> & {
   method?: HttpMethod;
-  body?: any;
-}
+  body?: unknown;
+};
 
 async function request<T>(path: string, options: ApiOptions = {}): Promise<T> {
   const url = `${API_BASE}${path}`;
@@ -24,14 +23,16 @@ async function request<T>(path: string, options: ApiOptions = {}): Promise<T> {
     ...(options.headers || {}),
   };
 
+  const normalizedBody: BodyInit | null | undefined =
+    options.body && typeof options.body !== 'string'
+      ? JSON.stringify(options.body)
+      : (options.body as BodyInit | null | undefined);
+
   const res = await fetch(url, {
     ...options,
     method: options.method || 'GET',
     headers,
-    body:
-      options.body && typeof options.body !== 'string'
-        ? JSON.stringify(options.body)
-        : options.body,
+    body: normalizedBody,
   });
 
   if (!res.ok) {
