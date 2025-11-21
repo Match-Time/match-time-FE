@@ -1,6 +1,12 @@
 import type {Metadata} from 'next';
+import {Nunito} from 'next/font/google';
 import './globals.css';
 import ConditionalBottomBar from './components/common/ConditionalBottomBar';
+
+const nunito = Nunito({
+  subsets: ['latin'],
+  display: 'swap',
+});
 
 // 메타 데이터
 export const metadata: Metadata = {
@@ -12,21 +18,9 @@ export const metadata: Metadata = {
 export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
     <html lang="ko">
-      <head>
-        {/* Google Fonts Preload */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin="anonymous"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap"
-          rel="stylesheet"
-        />
-      </head>
+      <head />
 
-      <body className="antialiased bg-blue-50">
+      <body className={`${nunito.className} antialiased bg-blue-50`}>
         {/* 전체 모바일 프레임 */}
         <div className="flex flex-col w-full max-w-sm mx-auto h-dvh font-suit bg-background">
           {/* 메인 콘텐츠(스크롤 가능) */}

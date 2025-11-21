@@ -6,6 +6,7 @@ import Link from 'next/link';
 import {useRouter} from 'next/navigation';
 import {createRoom, joinRoom, RoomType} from '@/lib/api';
 import {getUser} from '@/lib/userStorage';
+import {getErrorMessage} from '@/lib/utils';
 
 const meetingTypes = [
   {key: 'team', label: '팀 회의', value: 'ONCE'},
@@ -46,8 +47,8 @@ export default function CreateGroupPage() {
       });
       await joinRoom(stored.id, room.id);
       router.push(`/group/${room.id}/month`);
-    } catch (err: any) {
-      setError(err.message || '방을 만들지 못했습니다.');
+    } catch (err) {
+      setError(getErrorMessage(err, '방을 만들지 못했습니다.'));
     } finally {
       setLoading(false);
     }
