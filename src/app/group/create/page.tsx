@@ -6,25 +6,28 @@ import Link from 'next/link';
 import {useRouter} from 'next/navigation';
 import {createRoom, joinRoom, RoomType} from '@/lib/api';
 import {getUser} from '@/lib/userStorage';
-import {getErrorMessage} from '@/lib/utils';
 
 const meetingTypes = [
-  {label: '팀 회의', value: 'ONCE'},
-  {label: '정기 회의', value: 'WEEKLY'},
-  {label: '친구 모임', value: 'ONCE'},
-  {label: '기타', value: 'ONCE'},
+  {key: 'team', label: '팀 회의', value: 'ONCE'},
+  {key: 'weekly', label: '정기 회의', value: 'WEEKLY'},
+  {key: 'friends', label: '친구 모임', value: 'ONCE'},
+  {key: 'etc', label: '기타', value: 'ONCE'},
 ] as const;
 
 export default function CreateGroupPage() {
   const [meetingName, setMeetingName] = useState('');
-  const [meetingType, setMeetingType] = useState<
-    (typeof meetingTypes)[number]['value'] | ''
+  const [selectedMeetingTypeKey, setSelectedMeetingTypeKey] = useState<
+    (typeof meetingTypes)[number]['key'] | ''
   >('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  const isFormValid = meetingName.trim() !== '' && meetingType !== '';
+  const selectedMeetingType = meetingTypes.find(
+    (type) => type.key === selectedMeetingTypeKey
+  );
+
+  const isFormValid = meetingName.trim() !== '' && !!selectedMeetingType;
 
   const handleNextClick = async () => {
     if (!isFormValid || loading) return;
@@ -39,12 +42,12 @@ export default function CreateGroupPage() {
     try {
       const room = await createRoom({
         name: meetingName.trim(),
-        type: meetingType as RoomType,
+        type: selectedMeetingType!.value as RoomType,
       });
       await joinRoom(stored.id, room.id);
       router.push(`/group/${room.id}/month`);
-    } catch (err) {
-      setError(getErrorMessage(err, '방을 만들지 못했습니다.'));
+    } catch (err: any) {
+      setError(err.message || '방을 만들지 못했습니다.');
     } finally {
       setLoading(false);
     }
@@ -88,10 +91,10 @@ focus:outline-none focus:border-transparent focus:ring-2 focus:ring-yellow-main"
             {meetingTypes.map((type) => (
               <button
                 key={type.label}
-                onClick={() => setMeetingType(type.value)}
+                onClick={() => setSelectedMeetingTypeKey(type.key)}
                 className={`px-4 py-1 rounded-full text-sm font-semibold border
                   ${
-                    meetingType === type.value
+                    selectedMeetingTypeKey === type.key
                       ? 'bg-yellow-main font-normal text-white border-yellow-main'
                       : 'bg-gray-background text-gray-light font-light border-gray-background'
                   }`}

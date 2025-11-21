@@ -2,13 +2,12 @@
 
 /**
  * Lightweight fetch wrapper for the Spring backend.
- * All endpoints are assumed to live under the same origin unless
- * NEXT_PUBLIC_API_BASE is provided.
+ * To avoid CORS in production, we default to same-origin requests and rely on
+ * Next.js rewrites (see next.config.ts) to proxy `/api/*` to the backend.
+ * If you really need to target a different origin, set NEXT_PUBLIC_API_BASE.
  */
 
-const API_BASE =
-  process.env.NEXT_PUBLIC_API_BASE ||
-  'https://matchtime-app-purple-firefly-5004.fly.dev';
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || '';
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
