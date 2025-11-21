@@ -24,14 +24,16 @@ async function request<T>(path: string, options: ApiOptions = {}): Promise<T> {
     ...(options.headers || {}),
   };
 
+  const normalizedBody: BodyInit | null | undefined =
+    options.body && typeof options.body !== 'string'
+      ? JSON.stringify(options.body)
+      : (options.body as BodyInit | null | undefined);
+
   const res = await fetch(url, {
     ...options,
     method: options.method || 'GET',
     headers,
-    body:
-      options.body && typeof options.body !== 'string'
-        ? JSON.stringify(options.body)
-        : options.body,
+    body: normalizedBody,
   });
 
   if (!res.ok) {
