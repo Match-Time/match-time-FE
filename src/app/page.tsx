@@ -43,7 +43,7 @@ export default function Page() {
             value={userId}
             onChange={(e) => setUserId(e.target.value)}
             placeholder="아이디 입력"
-            className="w-full p-3 border-2 text-sm border-gray-light rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-main"
+            className="w-full p-3 border-2 text-sm border-gray-light rounded-xl focus:outline-none focus:border-yellow-main focus:ring-1 focus:ring-yellow-main"
             required
           />
           <input
@@ -51,7 +51,7 @@ export default function Page() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="비밀번호 입력"
-            className="w-full p-3 border-2 text-sm border-gray-light rounded-xl focus:outline-none focus:ring-2 focus:ring-yellow-main"
+            className="w-full p-3 border-2 text-sm border-gray-light rounded-xl focus:outline-none focus:border-yellow-main focus:ring-1 focus:ring-yellow-main"
             required
           />
         </div>
