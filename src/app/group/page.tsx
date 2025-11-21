@@ -28,6 +28,7 @@ export default function GroupPage() {
     const stored = getUser();
     if (!stored) {
       router.push('/');
+      setLoading(false);
       return;
     }
 
@@ -39,7 +40,7 @@ export default function GroupPage() {
           rooms.map(async (room) => {
             const users = await fetchRoomUsers(room.id);
             return {room, participantCount: users.length};
-          }),
+          })
         );
         setItems(withCounts);
         setError(null);
@@ -118,26 +119,42 @@ export default function GroupPage() {
           <div className="space-y-4">
             {items.map(({room, participantCount}) => {
               const confirmed = room.confirmedDate;
-              const dateParts = confirmed ? room.confirmedDate?.split('-') : null;
+              const dateParts = confirmed
+                ? room.confirmedDate?.split('-')
+                : null;
               return (
-                <Link href={`/group/${room.id}`} key={room.id} className="block">
+                <Link
+                  href={`/group/${room.id}`}
+                  key={room.id}
+                  className="block"
+                >
                   <div className="flex items-center justify-between py-3 px-4 border-2 border-yellow-main rounded-2xl">
                     <div>
-                      <h3 className="font-bold text-yellow-main">{room.name}</h3>
+                      <h3 className="font-bold text-yellow-main">
+                        {room.name}
+                      </h3>
                       <div className="flex items-center space-x-2 text-sm text-gray-400 mt-1">
-                        <Tag text={typeLabel[room.type]} textColor="text-white" />
-                        <span className="text-gray-dark">{participantCount}명 참여 중</span>
+                        <Tag text={typeLabel[room.type]} />
+                        <span className="text-gray-dark">
+                          {participantCount}명 참여 중
+                        </span>
                       </div>
                     </div>
 
                     <div className="flex items-center justify-between">
                       {confirmed && dateParts && dateParts.length === 3 ? (
                         <div className="text-right mr-2">
-                          <span className="text-sm text-gray-dark">모임 확정 날짜</span>
+                          <span className="text-sm text-gray-dark">
+                            모임 확정 날짜
+                          </span>
                           <div className="flex items-center justify-end w-full text-lg font-bold">
-                            <span className="text-red-main">{Number(dateParts[1])}</span>
+                            <span className="text-red-main">
+                              {Number(dateParts[1])}
+                            </span>
                             <span className="text-black">월</span>
-                            <span className="text-red-main ml-1">{Number(dateParts[2])}</span>
+                            <span className="text-red-main ml-1">
+                              {Number(dateParts[2])}
+                            </span>
                             <span className="text-black">일</span>
                           </div>
                         </div>
