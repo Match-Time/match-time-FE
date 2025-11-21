@@ -21,7 +21,7 @@ export default function Page() {
     try {
       const users = await fetchUsers();
       const user = users.find(
-        (u) => u.email === email.trim() && u.password === password.trim(),
+        (u) => u.email === email.trim() && u.password === password.trim()
       );
 
       if (!user) {
@@ -38,6 +38,8 @@ export default function Page() {
     }
   };
 
+  const isButtonDisabled = !email || !password || loading;
+
   return (
     <div className="flex flex-col h-full bg-white py-7">
       <header className="px-2 text-left mt-20 mb-8">
@@ -51,10 +53,7 @@ export default function Page() {
         <p className="text-gray-dark mt-2">모임이 더 쉬워지는 순간</p>
       </header>
 
-      <form
-        onSubmit={handleLogin}
-        className="flex-grow flex flex-col justify-between"
-      >
+      <form onSubmit={handleLogin}>
         <div className="space-y-4">
           <input
             type="email"
@@ -78,8 +77,12 @@ export default function Page() {
         <div>
           <button
             type="submit"
-            className="w-full mt-8 py-4 text-lg text-white rounded-xl bg-gradient-to-r from-yellow-main to-yellow-light disabled:bg-gray-medium"
-            disabled={!email || !password || loading}
+            className={`w-full mt-8 py-4 text-lg text-white rounded-xl ${
+              isButtonDisabled
+                ? 'bg-gray-light'
+                : 'bg-gradient-to-r from-yellow-main to-yellow-light'
+            }`}
+            disabled={isButtonDisabled}
           >
             {loading ? '로그인 중...' : '다음'}
           </button>
