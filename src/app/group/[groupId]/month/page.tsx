@@ -1,31 +1,31 @@
-"use client";
+'use client';
 
 import { useState } from "react";
 import { isSameDay } from "date-fns";
 import TopBar from "@/app/components/common/topBar";
-import BottomNav from "@/app/components/common/bottomBar";
-import Button from "@/app/components/common/button/Button";
 import ScheduleCalendar from "@/app/components/calendar/ScheduleCalendar";
-import { useParams } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 
 export default function MonthPage() {
   const params = useParams();
-  const { groupId } = params;
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const groupId = params?.groupId as string;
+  const fromSettings = searchParams.get('from') === 'settings';
+
+  if (!groupId) {
+    return <div>Loading or Invalid Group ID...</div>;
+  }
 
   // State for the calendar
-  const [month, setMonth] = useState(new Date("2025-11-01")); // Set to Nov 2025 for consistency with image
-  
-  // Mock initial unavailable days based on the image (10, 11)
+  const [month, setMonth] = useState(new Date()); 
   const [unavailableDays, setUnavailableDays] = useState<Date[]>([
       new Date("2025-11-10"),
       new Date("2025-11-11"),
   ]); 
-  const [isEditing, setIsEditing] = useState(false);
 
   const handleDayClick = (day: Date) => {
-    if (!isEditing) return;
-    
-    // Prevent selecting past dates
     const today = new Date();
     today.setHours(0,0,0,0);
     if (day < today) {
@@ -40,46 +40,57 @@ export default function MonthPage() {
     }
   };
   
-  const handleEditToggle = () => {
-    if (isEditing) {
-      // This is where you would call the API to save the dates
-      console.log("Saving unavailable days for group", groupId);
-      // Sort dates before logging/sending
-      const sortedDates = [...unavailableDays].sort((a, b) => a.getTime() - b.getTime());
-      console.log(sortedDates.map(d => d.toLocaleDateString()));
-    }
-    setIsEditing(!isEditing);
+  const handleNextClick = () => {
+    console.log("Selected unavailable days for group", groupId);
+    console.log(unavailableDays.map(d => d.toLocaleDateString()));
+    router.push(`/group/${groupId}`);
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gray-background">
-      {/* The user name in the image seems like a placeholder. 
-          The bottom nav says "고정표" (Fixed Schedule) which is more relevant. */}
-      <TopBar title="고정표" />
+    <div className="flex flex-col h-full bg-white">
+      <TopBar title="불가능 날짜 선택" />
       
-      <main className="flex-1 overflow-y-auto p-4">
+      <main className="flex-1 overflow-y-auto px-4 pt-4">
+        <div className="mb-4 px-4">
+          <p className="text-lg font-bold text-gray-dark mb-1">내 고정 시간표에서</p>
+          <p className="text-lg font-bold text-gray-dark mb-2">
+            불가능한 날짜를 <span className="text-yellow-main">수정</span>해 보세요.
+          </p>
+          <p className="text-sm text-gray-medium">
+            현재 수정하는 사항은 이 모임에만 적용돼요.
+          </p>
+        </div>
+
         <ScheduleCalendar
           month={month}
           onMonthChange={setMonth}
           selectedDays={unavailableDays}
           onDayClick={handleDayClick}
-          isEditing={isEditing}
         />
         
-        <div className="flex items-center justify-center pt-4 text-sm mt-4">
-          <span className="w-4 h-4 rounded-full bg-yellow-main mr-2"></span>
-          <span className="text-gray-dark">불가능한 날짜</span>
+        <div className="flex flex-col items-start pt-4 text-sm mt-4 pl-4">
+          <div className="flex items-center mb-2">
+            <span className="w-4 h-4 rounded-full bg-yellow-main mr-2"></span>
+            <span className="text-gray-dark">불가능한 날짜</span>
+          </div>
+          <div className="flex items-center">
+            <span className="w-4 h-4 rounded-full border-2 border-yellow-main mr-2"></span>
+            <span className="text-gray-dark">오늘 날짜</span>
+          </div>
         </div>
       </main>
       
-      <div className="p-4 bg-white border-t">
-          <Button 
-            onClick={handleEditToggle}
-            variant={isEditing ? 'default' : 'outline'}
-          >
-            {isEditing ? "수정 완료" : "수정하기"}
-          </Button>
-      </div>
+      {/* Conditionally render the footer with the button */}
+      {!fromSettings && (
+        <div className="p-4 bg-white border-t">
+            <button 
+              onClick={handleNextClick}
+              className="w-full py-4 text-lg font-bold text-white rounded-lg bg-gradient-to-r from-yellow-main to-yellow-light"
+            >
+              다음
+            </button>
+        </div>
+      )}
     </div>
   );
 }

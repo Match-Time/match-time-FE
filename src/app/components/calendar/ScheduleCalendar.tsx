@@ -7,7 +7,6 @@ import 'react-day-picker/style.css'; // MUST import for base structure
 interface ScheduleCalendarProps {
   selectedDays: Date[];
   onDayClick: (day: Date) => void;
-  isEditing: boolean;
   month: Date;
   onMonthChange: (month: Date) => void;
 }
@@ -15,14 +14,11 @@ interface ScheduleCalendarProps {
 export default function ScheduleCalendar({
   selectedDays,
   onDayClick,
-  isEditing,
   month,
   onMonthChange,
 }: ScheduleCalendarProps) {
   const handleDayClick = (day: Date) => {
-    if (isEditing) {
-      onDayClick(day);
-    }
+    onDayClick(day);
   };
 
   const modifiers = {
@@ -63,7 +59,7 @@ export default function ScheduleCalendar({
         // Day
         day: 'h-10 w-10 rounded-md transition-colors bg-gray-background',
         day_selected: '!bg-yellow-main !text-black [border-radius:0.375rem]',
-        day_today: 'font-bold',
+        day_today: 'font-bold border-2 border-yellow-main', // Modified to include border
         day_outside: '!text-gray-light',
 
         // Remove default button outlines and styles
