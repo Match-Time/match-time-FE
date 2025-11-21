@@ -15,7 +15,7 @@ export default function MyPage() {
   };
 
   return (
-    <div className="flex flex-col h-full bg-white p-4">
+    <div className="flex flex-col h-full bg-white">
       {/* Profile Section */}
       <section className="flex flex-col items-center pt-8 pb-8">
         <div className="relative pr-2">
@@ -51,8 +51,22 @@ export default function MyPage() {
 
       {/* CTA Banner */}
       <section>
-        <div className="relative p-6 bg-yellow-main rounded-2xl text-black overflow-hidden">
-          <div className="relative z-10">
+        <div className="relative p-6 bg-gradient-to-r from-yellow-main to-yellow-light rounded-2xl text-black overflow-hidden">
+          <Image
+            src="/images/ic_calender.png"
+            alt=""
+            width={60}
+            height={60}
+            className="absolute -left-2 top-1/2 transform -translate-y-1/2 z-0 opacity-70"
+          />
+          <Image
+            src="/images/ic_clock.png"
+            alt=""
+            width={50}
+            height={50}
+            className="absolute -right-2 top-1/2 transform -translate-y-1/2 z-0 opacity-70"
+          />
+          <div className="relative z-10 w-full text-center">
             <h3 className="font-bold text-lg">기본 시간표를 설정해 보세요!</h3>
             <p className="text-sm mb-4">모든 방에 불러올 수 있어요.</p>
             <button
@@ -62,13 +76,6 @@ export default function MyPage() {
               설정하러 가기
             </button>
           </div>
-          <Image
-            src="/images/icon_month_gray.png" // Using as a placeholder background icon
-            alt=""
-            width={100}
-            height={100}
-            className="absolute -right-4 -bottom-4 z-0 opacity-20"
-          />
         </div>
       </section>
     </div>
