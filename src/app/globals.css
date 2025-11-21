@@ -182,7 +182,7 @@ body {
 .rdp-tbody {
   display: grid !important;
   grid-template-columns: repeat(7, 1fr) !important;
-  gap: 8px !important;
+  gap: 10px !important;
 }
 
 .rdp-row {
@@ -197,22 +197,41 @@ body {
 
 /* Day 버튼을 우리가 원하는 네모 박스로 */
 .rdp-button {
-  width: 44px;
-  height: 44px;
-  border-radius: 10px;
-  background: #f3f3f3;
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  background: #f5f5f5;
+  color: #222;
+  font-weight: 500;
+  border: none;
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: background-color 0.2s ease;
 }
 
 .rdp-button:hover {
-  background: #e2e2e2;
+  background: #ededed;
 }
 
 /* 선택된 날짜 */
 .rdp-day_selected {
-  background: linear-gradient(to bottom, #fbd34e, #ffcc00) !important;
-  color: black !important;
-  border-radius: 10px !important;
+  background: linear-gradient(180deg, #f4d35e 0%, #e5c242 100%) !important;
+  color: #fff !important;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.rdp-day_today {
+  border: 2px solid #e5c242 !important;
+  background: #fff !important;
+  color: #222 !important;
+  border-radius: 12px !important;
+}
+
+.rdp-day_disabled {
+  background: #f2f2f2 !important;
+  color: #c5c5c5 !important;
+  cursor: not-allowed;
+  opacity: 0.65;
 }

@@ -1,30 +1,56 @@
 'use client';
 
+'use client';
+
 import {useState} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import {useRouter} from 'next/navigation';
+import {createRoom, joinRoom, RoomType} from '@/lib/api';
+import {getUser} from '@/lib/userStorage';
 
-const meetingTypes = ['팀 회의', '정기 회의', '친구 모임', '기타'];
+const meetingTypes = [
+  {label: '팀 회의', value: 'ONCE'},
+  {label: '정기 회의', value: 'WEEKLY'},
+  {label: '친구 모임', value: 'ONCE'},
+  {label: '기타', value: 'ONCE'},
+] as const;
 
 export default function CreateGroupPage() {
   const [meetingName, setMeetingName] = useState('');
-  const [meetingType, setMeetingType] = useState('');
+  const [meetingType, setMeetingType] = useState<(typeof meetingTypes)[number]['value'] | ''>('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   const isFormValid = meetingName.trim() !== '' && meetingType !== '';
 
-  const handleNextClick = () => {
-    if (isFormValid) {
-      // TODO: API 연동하여 그룹 생성 후 해당 groupId로 이동 필요
-      const groupId = 'temp-group-id';
-      router.push(`/group/${groupId}/month`);
+  const handleNextClick = async () => {
+    if (!isFormValid || loading) return;
+    const stored = getUser();
+    if (!stored) {
+      router.push('/');
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+    try {
+      const room = await createRoom({
+        name: meetingName.trim(),
+        type: meetingType as RoomType,
+      });
+      await joinRoom(stored.id, room.id);
+      router.push(`/group/${room.id}/month`);
+    } catch (err: any) {
+      setError(err.message || '방을 만들지 못했습니다.');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="flex flex-col h-full">
-      {/* Top Bar */}
       <header className="relative flex items-center justify-center mb-8">
         <Link href="/group" className="absolute left-0">
           <Image
@@ -37,7 +63,6 @@ export default function CreateGroupPage() {
         <h1 className="text-lg font-semibold">모임 기본 정보 입력</h1>
       </header>
       <main className="flex-grow">
-        {/* Meeting Name Input */}
         <div className="mb-8">
           <label className="block mb-2 font-semibold">
             모임 이름을 입력해 주세요{' '}
@@ -53,7 +78,6 @@ focus:outline-none focus:border-transparent focus:ring-2 focus:ring-yellow-main"
           />
         </div>
 
-        {/* Meeting Type Selection */}
         <div>
           <label className="block mb-2 font-semibold">
             모임 유형를 선택해 주세요{' '}
@@ -62,27 +86,27 @@ focus:outline-none focus:border-transparent focus:ring-2 focus:ring-yellow-main"
           <div className="flex flex-wrap gap-2">
             {meetingTypes.map((type) => (
               <button
-                key={type}
-                onClick={() => setMeetingType(type)}
+                key={type.label}
+                onClick={() => setMeetingType(type.value)}
                 className={`px-4 py-1 rounded-full text-sm font-semibold border
                   ${
-                    meetingType === type
+                    meetingType === type.value
                       ? 'bg-yellow-main font-normal text-white border-yellow-main'
                       : 'bg-gray-background text-gray-light font-light border-gray-background'
                   }`}
               >
-                {type}
+                {type.label}
               </button>
             ))}
           </div>
         </div>
+        {error && <p className="text-sm text-red-main mt-4">{error}</p>}
       </main>
-      {/* Bottom Button */}
       <div className="fixed bottom-8 left-0 right-0">
         <footer className="w-full max-w-sm mx-auto bg-white px-4 pb-4">
           <button
             onClick={handleNextClick}
-            disabled={!isFormValid}
+            disabled={!isFormValid || loading}
             className={`w-full py-4 text-base font-semibold text-white rounded-xl
                     ${
                       isFormValid
@@ -90,7 +114,7 @@ focus:outline-none focus:border-transparent focus:ring-2 focus:ring-yellow-main"
                         : 'bg-gray-light'
                     }`}
           >
-            다음
+            {loading ? '만드는 중...' : '다음'}
           </button>
         </footer>
       </div>{' '}

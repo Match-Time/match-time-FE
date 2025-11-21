@@ -1,17 +1,45 @@
 'use client';
 
+import {useEffect, useState} from 'react';
 import {useRouter} from 'next/navigation';
 import Image from 'next/image';
 import {Pencil, UserCog, Info} from 'lucide-react';
 import SettingMenuItem from '@/app/components/common/SettingMenuItem';
+import {getUser, saveUser} from '@/lib/userStorage';
+import {updateUserNickname} from '@/lib/api';
 
 export default function MyPage() {
   const router = useRouter();
+  const [nickname, setNickname] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+  const [error, setError] = useState<string | null>(null);
 
-  // Mock user data
-  const userData = {
-    name: '이모임',
-    avatar: '/images/ic_profile_cat.png',
+  useEffect(() => {
+    const stored = getUser();
+    if (!stored) {
+      router.push('/');
+      return;
+    }
+    setNickname(stored.nickname);
+    setEmail(stored.email);
+  }, [router]);
+
+  const handleNicknameChange = async () => {
+    const stored = getUser();
+    if (!stored) {
+      router.push('/');
+      return;
+    }
+    const next = prompt('새 닉네임을 입력하세요', nickname);
+    if (!next || next.trim() === nickname) return;
+    try {
+      const updated = await updateUserNickname(stored.id, next.trim());
+      saveUser({id: updated.id, email: updated.email, nickname: updated.nickname});
+      setNickname(updated.nickname);
+      setError(null);
+    } catch (err: any) {
+      setError(err.message || '닉네임을 변경하지 못했습니다.');
+    }
   };
 
   return (
@@ -20,16 +48,16 @@ export default function MyPage() {
       <section className="flex flex-col items-center pt-8 pb-8">
         <div className="relative pr-2">
           <Image
-            src={userData.avatar}
+            src="/images/ic_profile_cat.png"
             alt="User Avatar"
             width={133}
             height={118}
             className="rounded-full"
           />
         </div>
-        <h1 className=" text-xl mt-1 font-bold text-gray-dark">
-          {userData.name}
-        </h1>
+        <h1 className=" text-xl mt-1 font-bold text-gray-dark">{nickname}</h1>
+        <p className="text-sm text-gray-medium mt-1">{email}</p>
+        {error && <p className="text-sm text-red-main mt-2">{error}</p>}
       </section>
 
       {/* Settings Menu */}
@@ -38,7 +66,7 @@ export default function MyPage() {
           <SettingMenuItem
             icon={<UserCog size={24} className="text-yellow-main" />}
             title="계정 관리"
-            onClick={() => console.log('Navigate to Account Management')}
+            onClick={handleNicknameChange}
           />
           <hr className="ml-16 border-t border-gray-100" />
           <SettingMenuItem

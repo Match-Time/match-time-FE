@@ -54,10 +54,16 @@ interface ShareSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   groupId: string;
+  inviteCode?: string;
 }
 
-export function ShareSheet({ open, onOpenChange, groupId }: ShareSheetProps) {
-  const shareLink = `https://www.moyeoyo.com/group/${groupId}`;
+export function ShareSheet({ open, onOpenChange, groupId, inviteCode }: ShareSheetProps) {
+  const siteBase =
+    process.env.NEXT_PUBLIC_SITE_BASE ||
+    (typeof window !== 'undefined' ? window.location.origin : 'http://localhost:3000');
+  const shareValue = inviteCode
+    ? `${siteBase}/group/join/${inviteCode}`
+    : `${siteBase}/group/${groupId}`;
   const [isCatVisible, setIsCatVisible] = React.useState(false);
 
   React.useEffect(() => {
@@ -75,11 +81,14 @@ export function ShareSheet({ open, onOpenChange, groupId }: ShareSheetProps) {
 
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(shareLink).then(() => {
-      alert('링크가 복사되었습니다!');
-    }).catch(err => {
-      console.error('Failed to copy text: ', err);
-    });
+    navigator.clipboard
+      .writeText(shareValue)
+      .then(() => {
+        alert('초대코드가 복사되었습니다!');
+      })
+      .catch((err) => {
+        console.error('Failed to copy text: ', err);
+      });
   };
 
   return (
@@ -93,7 +102,11 @@ export function ShareSheet({ open, onOpenChange, groupId }: ShareSheetProps) {
 
             <div className="mt-16 text-center">
                 <DialogTitle className="text-xl font-bold">모임에 초대할 준비가 됐어요!</DialogTitle>
-                <p className="mt-2 text-sm text-gray-500">복사해서 모임 인원에게 전송해 보세요</p>
+                <p className="mt-2 text-sm text-gray-500">
+                  {inviteCode
+                    ? '초대코드를 복사해 모임 인원에게 전송해 보세요'
+                    : '링크를 복사해 모임 인원에게 전송해 보세요'}
+                </p>
             </div>
 
             {/* Link Input */}
@@ -101,7 +114,7 @@ export function ShareSheet({ open, onOpenChange, groupId }: ShareSheetProps) {
                 <input
                     type="text"
                     readOnly
-                    value={shareLink}
+                    value={shareValue}
                     className="w-full p-3 pr-12 border border-gray-300 rounded-lg bg-gray-50 text-sm"
                 />
                 <button onClick={handleCopy} className="absolute inset-y-0 right-0 flex items-center pr-3">
