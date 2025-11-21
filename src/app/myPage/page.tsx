@@ -7,6 +7,7 @@ import {UserCog, Info} from 'lucide-react';
 import SettingMenuItem from '@/app/components/common/SettingMenuItem';
 import {getUser, saveUser} from '@/lib/userStorage';
 import {updateUserNickname} from '@/lib/api';
+import {getErrorMessage} from '@/lib/utils';
 
 export default function MyPage() {
   const router = useRouter();
@@ -37,8 +38,8 @@ export default function MyPage() {
       saveUser({id: updated.id, email: updated.email, nickname: updated.nickname});
       setNickname(updated.nickname);
       setError(null);
-    } catch (err: Error) {
-      setError(err.message || '닉네임을 변경하지 못했습니다.');
+    } catch (err) {
+      setError(getErrorMessage(err, '닉네임을 변경하지 못했습니다.'));
     }
   };
 

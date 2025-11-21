@@ -5,6 +5,7 @@ import {useRouter} from 'next/navigation';
 import Image from 'next/image'; // Added Image import
 import {createUser} from '@/lib/api';
 import {saveUser} from '@/lib/userStorage';
+import {getErrorMessage} from '@/lib/utils';
 
 export default function Page() {
   const router = useRouter();
@@ -22,8 +23,8 @@ export default function Page() {
       const user = await createUser({email, password, nickname});
       saveUser({id: user.id, email: user.email, nickname: user.nickname});
       router.push('/group');
-    } catch (err: Error) {
-      setError(err.message || '회원가입에 실패했습니다.');
+    } catch (err) {
+      setError(getErrorMessage(err, '회원가입에 실패했습니다.'));
     } finally {
       setLoading(false);
     }

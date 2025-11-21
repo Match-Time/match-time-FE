@@ -5,6 +5,7 @@ import Link from 'next/link';
 import {useRouter} from 'next/navigation';
 import Image from 'next/image';
 import {fetchUsers} from '@/lib/api';
+import {getErrorMessage} from '@/lib/utils';
 import {saveUser} from '@/lib/userStorage';
 
 export default function Page() {
@@ -31,8 +32,8 @@ export default function Page() {
 
       saveUser({id: user.id, email: user.email, nickname: user.nickname});
       router.push('/group');
-    } catch (err: Error) {
-      setError(err.message || '로그인에 실패했습니다.');
+    } catch (err) {
+      setError(getErrorMessage(err, '로그인에 실패했습니다.'));
     } finally {
       setLoading(false);
     }

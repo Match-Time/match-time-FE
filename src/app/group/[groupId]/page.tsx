@@ -18,6 +18,7 @@ import {
 } from '@/lib/api';
 import {getUser} from '@/lib/userStorage';
 import {ParticipantSheet} from '@/app/components/common/ParticipantSheet';
+import {getErrorMessage} from '@/lib/utils';
 
 interface DisplayDate {
   id: string;
@@ -96,8 +97,8 @@ export default function GroupDetailPage() {
         setSelectedDate(normalized[0]?.date ?? null);
         setConfirmedDate(room.confirmedDate || null);
         setError(null);
-      } catch (err: any) {
-        setError(err.message || '방 정보를 불러오지 못했습니다.');
+      } catch (err) {
+        setError(getErrorMessage(err, '방 정보를 불러오지 못했습니다.'));
       } finally {
         setLoading(false);
       }
@@ -148,8 +149,8 @@ export default function GroupDetailPage() {
       setError(null);
 
       setIsBouncing(false);
-    } catch (err: any) {
-      setError(err.message || '확정에 실패했습니다.');
+    } catch (err) {
+      setError(getErrorMessage(err, '확정에 실패했습니다.'));
     } finally {
       setSaving(false);
     }

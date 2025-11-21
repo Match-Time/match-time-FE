@@ -1,9 +1,8 @@
 'use client';
 
 import type { CSSProperties } from 'react';
-import { DayPicker } from 'react-day-picker';
-import { ko } from 'date-fns/locale';
-import 'react-day-picker/style.css';
+import {DayPicker} from 'react-day-picker';
+import {ko} from 'date-fns/locale';
 
 interface ScheduleCalendarProps {
   selectedDays: Date[];
@@ -23,9 +22,10 @@ export default function ScheduleCalendar({
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const yellow = '#e5c242';
+  const editable = isEditing ?? true;
 
   const handleDayClick = (day: Date) => {
-    if (!isEditing) return;
+    if (!editable) return;
     onDayClick(day);
   };
 
@@ -50,7 +50,7 @@ export default function ScheduleCalendar({
       month={month}
       onMonthChange={onMonthChange}
       showOutsideDays
-      disabled={!isEditing}
+      disabled={!editable}
       //disabled={disabledBeforeToday}
       modifiers={modifiers}
       modifiersClassNames={modifiersClassNames}
@@ -99,15 +99,15 @@ export default function ScheduleCalendar({
 
         /** 클릭 버튼 */
         day_button: {
-          cursor: isEditing ? 'pointer' : 'default',
+          cursor: editable ? 'pointer' : 'default',
         },
 
         /** 헤더 / 네비게이션 */
         caption: { alignItems: 'center', color: yellow },
         caption_label: { fontWeight: 800, fontSize: '18px', color: yellow },
-        nav_button: { color: isEditing ? yellow : '#c8c8c8', border: 'none', background: 'transparent' },
-        nav_button_previous: { color: isEditing ? '#c8c8c8' : '#e0e0e0' },
-        nav_button_next: { color: isEditing ? yellow : '#e0e0e0' },
+        nav_button: { color: editable ? yellow : '#c8c8c8', border: 'none', background: 'transparent' },
+        nav_button_previous: { color: editable ? '#c8c8c8' : '#e0e0e0' },
+        nav_button_next: { color: editable ? yellow : '#e0e0e0' },
 
         head_cell: { fontWeight: 700 },
         table: { borderSpacing: '10px 10px' },

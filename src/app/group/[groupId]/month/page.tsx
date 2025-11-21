@@ -11,6 +11,7 @@ import {
   fetchUserMonthlyUnavailable,
   saveRoomMonthlyUnavailable,
 } from '@/lib/api';
+import {getErrorMessage} from '@/lib/utils';
 import {getUser} from '@/lib/userStorage';
 
 const toLocalISO = (date: Date) => {
@@ -62,8 +63,8 @@ export default function MonthPage() {
 
         setUnavailableDays(baseDates.map((d) => fromISO(d)));
         setError(null);
-      } catch (err: Error) {
-        setError(err.message || '불가능 날짜를 불러오지 못했습니다.');
+      } catch (err) {
+        setError(getErrorMessage(err, '불가능 날짜를 불러오지 못했습니다.'));
       } finally {
         setLoading(false);
       }
@@ -98,8 +99,8 @@ export default function MonthPage() {
       await saveRoomMonthlyUnavailable(stored.id, groupIdNum, payload);
       setError(null);
       router.push(`/group/${groupId}`);
-    } catch (err: Error) {
-      setError(err.message || '저장에 실패했습니다.');
+    } catch (err) {
+      setError(getErrorMessage(err, '저장에 실패했습니다.'));
     } finally {
       setSaving(false);
     }

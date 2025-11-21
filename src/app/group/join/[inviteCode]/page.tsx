@@ -4,6 +4,7 @@ import {useEffect, useState} from 'react';
 import {useParams, useRouter} from 'next/navigation';
 import {getUser} from '@/lib/userStorage';
 import {fetchUserRooms, joinByInvite, Room} from '@/lib/api';
+import {getErrorMessage} from '@/lib/utils';
 
 export default function InviteJoinPage() {
   const params = useParams();
@@ -31,9 +32,9 @@ export default function InviteJoinPage() {
         setStatus('success');
         setMessage('참여 완료! 이동합니다...');
         router.push(target ? `/group/${target.id}` : '/group');
-      } catch (err: Error) {
+      } catch (err) {
         setStatus('error');
-        setMessage(err.message || '참여에 실패했습니다.');
+        setMessage(getErrorMessage(err, '참여에 실패했습니다.'));
       }
     };
     run();

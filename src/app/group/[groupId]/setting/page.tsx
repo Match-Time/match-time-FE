@@ -19,6 +19,7 @@ import {ParticipantSheet} from '@/app/components/common/ParticipantSheet';
 import SettingMenuItem from '@/app/components/common/SettingMenuItem';
 import {getUser} from '@/lib/userStorage';
 import {fetchRoom, leaveRoom, updateRoomName} from '@/lib/api';
+import {getErrorMessage} from '@/lib/utils';
 
 export default function GroupSettingPage() {
   const router = useRouter();
@@ -47,8 +48,8 @@ export default function GroupSettingPage() {
         const room = await fetchRoom(groupIdNum);
         setNewGroupName(room.name);
         setError(null);
-      } catch (err: Error) {
-        setError(err.message || '모임 정보를 불러오지 못했습니다.');
+      } catch (err) {
+        setError(getErrorMessage(err, '모임 정보를 불러오지 못했습니다.'));
       } finally {
         setLoading(false);
       }
@@ -63,8 +64,8 @@ export default function GroupSettingPage() {
       await updateRoomName(groupIdNum, newGroupName.trim());
       setError(null);
       setIsNameDialogOpen(false);
-    } catch (err: Error) {
-      setError(err.message || '이름을 변경하지 못했습니다.');
+    } catch (err) {
+      setError(getErrorMessage(err, '이름을 변경하지 못했습니다.'));
     } finally {
       setSaving(false);
     }
@@ -80,8 +81,8 @@ export default function GroupSettingPage() {
       try {
         await leaveRoom(stored.id, groupIdNum);
         router.push('/group'); // 목록으로 이동
-      } catch (err: Error) {
-        setError(err.message || '모임 나가기에 실패했습니다.');
+      } catch (err) {
+        setError(getErrorMessage(err, '모임 나가기에 실패했습니다.'));
       }
     }
   };

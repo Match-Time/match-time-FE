@@ -7,6 +7,7 @@ import Tag from '@/app/components/common/Tag';
 import {fetchRoomUsers, fetchUserRooms, Room} from '@/lib/api';
 import {getUser} from '@/lib/userStorage';
 import {useRouter} from 'next/navigation';
+import {getErrorMessage} from '@/lib/utils';
 
 interface RoomListItem {
   room: Room;
@@ -44,8 +45,8 @@ export default function GroupPage() {
         );
         setItems(withCounts);
         setError(null);
-      } catch (err: Error) {
-        setError(err.message || '방 목록을 불러오지 못했습니다.');
+      } catch (err) {
+        setError(getErrorMessage(err, '방 목록을 불러오지 못했습니다.'));
       } finally {
         setLoading(false);
       }
