@@ -1,15 +1,16 @@
 'use client';
 
-import {DayPicker} from 'react-day-picker';
-import {ko} from 'date-fns/locale';
-import 'react-day-picker/style.css'; // MUST import for base structure
+import type { CSSProperties } from 'react';
+import { DayPicker } from 'react-day-picker';
+import { ko } from 'date-fns/locale';
+import 'react-day-picker/style.css';
 
 interface ScheduleCalendarProps {
   selectedDays: Date[];
   onDayClick: (day: Date) => void;
   month: Date;
   onMonthChange: (month: Date) => void;
-  isEditing?: boolean; // optional for typing convenience
+  isEditing?: boolean;
 }
 
 export default function ScheduleCalendar({
@@ -24,18 +25,21 @@ export default function ScheduleCalendar({
   const yellow = '#e5c242';
 
   const handleDayClick = (day: Date) => {
+    if (!isEditing) return;
     onDayClick(day);
   };
 
   const modifiers = {
-    saturday: {dayOfWeek: [6] as number[]},
-    sunday: {dayOfWeek: [0] as number[]},
+    saturday: { dayOfWeek: [6] },
+    sunday: { dayOfWeek: [0] },
   };
 
   const modifiersClassNames = {
     saturday: 'text-[#3b7cff]',
     sunday: 'text-[#e94a4a]',
   };
+
+  const disabledBeforeToday = { before: today };
 
   return (
     <DayPicker
@@ -46,66 +50,67 @@ export default function ScheduleCalendar({
       month={month}
       onMonthChange={onMonthChange}
       showOutsideDays
-      disabled={{before: today}}
+      //disabled={disabledBeforeToday}
       modifiers={modifiers}
       modifiersClassNames={modifiersClassNames}
       styles={{
-        day_selected: {
-          background: 'linear-gradient(180deg, #f4d35e 0%, #e5c242 100%)',
-          color: '#fff',
-          borderRadius: '12px',
-          fontWeight: 600,
-        },
-        day_today: {
-          border: `2px solid ${yellow}`,
-          borderRadius: '12px',
-          backgroundColor: '#fff',
-          fontWeight: 600,
-          color: '#222',
-        },
-        day_disabled: {
-          color: '#c5c5c5',
+        root: {
+          '--rdp-day-width': '46px',
+          '--rdp-day-height': '46px',
+          '--rdp-day_button-width': '46px',
+          '--rdp-day_button-height': '46px',
+          '--rdp-day_button-border-radius': '14px',
+        } as CSSProperties,
+
+        /** 기본 날짜 스타일 */
+        day: {
           backgroundColor: '#f5f5f5',
-          borderRadius: '12px',
+          color: '#4a4a4a',
+          borderRadius: '14px',
+          fontWeight: 600,
+          boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+          transition: 'background-color 0.2s ease, box-shadow 0.2s ease, border 0.2s ease',
         },
-        day: {color: '#222'},
-      }}
-      classNames={{
-        root: 'rdp w-full bg-white flex flex-col items-center text-base',
-        table: 'rdp-table w-full',
-        head_row: 'rdp-head_row',
-        head_cell:
-          'rdp-head_cell text-center text-sm font-semibold text-gray-800 pb-2 first:text-[#e94a4a] last:text-[#3b7cff]',
-        row: 'rdp-row',
-        cell: 'rdp-cell text-center',
 
-        caption:
-          'rdp-caption relative flex items-center justify-center w-full text-yellow-main mb-4 mt-2 font-extrabold',
-        caption_label: 'rdp-caption_label text-xl font-extrabold text-yellow-main',
-        nav: 'rdp-nav absolute left-0 right-0 top-1/2 -translate-y-1/2 flex justify-between px-2',
-        nav_button:
-          'rdp-nav_button h-8 w-8 rounded-full bg-white text-yellow-main shadow-sm flex items-center justify-center',
-        nav_button_previous: 'rdp-nav_button_previous',
-        nav_button_next: 'rdp-nav_button_next',
+        /** 선택된 날짜 */
+        day_selected: {
+          background: '#fde68a',
+          color: '#2f2f2f',
+          fontWeight: 600,
+          borderRadius: '14px',
+        },
 
-        head: 'rdp-head',
+        /** 밖의 날짜 */
+        day_outside: {
+          color: '#c7c7c7',
+          backgroundColor: '#f1f1f1',
+          borderRadius: '14px',
+        },
 
-        day: `rdp-day rounded-xl bg-[#f5f5f5] text-[#222] flex items-center justify-center transition-all border border-transparent shadow-[0_1px_2px_rgba(0,0,0,0.06)] ${
-          isEditing ? 'cursor-pointer' : 'cursor-default'
-        }`,
-        day_selected:
-          'rdp-day_selected !text-white [border-radius:0.75rem] [font-weight:700] !flex !items-center !justify-center shadow-sm',
-        day_today:
-          'rdp-day_today !bg-white !text-[#222] [border-radius:0.75rem] [font-weight:700]',
-        day_outside: 'rdp-day_outside !text-gray-300 !bg-[#f2f2f2]',
-        day_disabled:
-          'rdp-day_disabled !bg-[#f2f2f2] !text-gray-300 cursor-not-allowed opacity-70',
+        /** 비활성 날짜 */
+        day_disabled: {
+          color: '#a0a0a0',
+          backgroundColor: '#f0f0f0',
+          //border: '1px solid #e0e0e0',
+          cursor: 'not-allowed',
+          borderRadius: '14px',
+        },
 
-        button: 'rdp-button_reset border-none focus:outline-none',
-      }}
-      components={{
-        IconLeft: () => <span className="text-2xl text-yellow-main">{'<'}</span>,
-        IconRight: () => <span className="text-2xl text-yellow-main">{'>'}</span>,
+        /** 클릭 버튼 */
+        day_button: {
+          cursor: isEditing ? 'pointer' : 'default',
+        },
+
+        /** 헤더 / 네비게이션 */
+        caption: { alignItems: 'center', color: yellow },
+        caption_label: { fontWeight: 800, fontSize: '18px', color: yellow },
+        nav_button: { color: yellow, border: 'none', background: 'transparent' },
+        nav_button_previous: { color: '#c8c8c8' },
+        nav_button_next: { color: yellow },
+
+        head_cell: { fontWeight: 700 },
+        table: { borderSpacing: '10px 10px' },
+        row: { marginBottom: '8px' },
       }}
     />
   );

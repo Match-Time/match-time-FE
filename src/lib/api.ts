@@ -6,7 +6,9 @@
  * NEXT_PUBLIC_API_BASE is provided.
  */
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:8080';
+const API_BASE =
+  process.env.NEXT_PUBLIC_API_BASE ||
+  'https://matchtime-app-purple-firefly-5004.fly.dev';
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
