@@ -27,6 +27,8 @@ module.exports = {
       colors: {
         'yellow-main': '#F0C600',
         'yellow-light': '#FFE983',
+        'yellow-gradient': '#FFD301',
+        'yellow-dark': '#BE9D00',
         'green-light': '#DCFCE8',
         'green-main': '#1E8342',
         'gray-dark': '#717171',

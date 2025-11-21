@@ -21,7 +21,7 @@ export default function Page() {
   return (
     <div className="flex flex-col h-full bg-white py-7">
       {/* Header */}
-      <header className="px-2 text-left mt-16 mb-8">
+      <header className="px-2 text-left mt-20 mb-8">
         <Image
           src="/images/모여요.png"
           alt="모여요 로고"
