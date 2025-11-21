@@ -1,20 +1,53 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { fetchUsers } from '@/lib/api';
+import { loadStoredUser, saveStoredUser } from '@/lib/auth';
 
 export default function Page() {
   const router = useRouter();
   const [userId, setUserId] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    const stored = loadStoredUser();
+    if (stored) {
+      router.replace('/group');
+    }
+  }, [router]);
+
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('Logging in with:', { userId, password });
-    // TODO: Implement actual login logic (API call)
-    // On success, navigate to the main page
-    router.push('/group');
+    setError('');
+    setIsLoading(true);
+
+    try {
+      const users = await fetchUsers();
+      const matched = users.find(
+        (user) => user.email === userId.trim() && user.password === password
+      );
+
+      if (!matched) {
+        setError('아이디 또는 비밀번호를 확인해 주세요.');
+        return;
+      }
+
+      saveStoredUser({
+        id: matched.id,
+        email: matched.email,
+        nickname: matched.nickname,
+      });
+
+      router.push('/group');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '로그인에 실패했어요.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -32,7 +65,7 @@ export default function Page() {
             type="text"
             value={userId}
             onChange={(e) => setUserId(e.target.value)}
-            placeholder="아이디 입력"
+            placeholder="아이디(이메일) 입력"
             className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-main"
             required
           />
@@ -44,15 +77,16 @@ export default function Page() {
             className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-main"
             required
           />
+          {error && <p className="text-sm text-red-500">{error}</p>}
         </div>
 
         <div>
           <button
             type="submit"
             className="w-full py-4 text-lg font-bold text-white rounded-lg bg-gradient-to-r from-yellow-main to-yellow-light disabled:bg-gray-medium"
-            disabled={!userId || !password}
+            disabled={!userId || !password || isLoading}
           >
-            다음
+            {isLoading ? '로그인 중...' : '다음'}
           </button>
 
           <div className="text-center mt-6">

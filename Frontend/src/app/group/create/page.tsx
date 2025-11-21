@@ -1,24 +1,53 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { RoomType, createRoom, joinRoom } from '@/lib/api';
+import { loadStoredUser } from '@/lib/auth';
 
-const meetingTypes = ['팀 회의', '정기 회의', '친구 모임', '기타'];
+const meetingTypes: { label: string; value: RoomType }[] = [
+  { label: '일회성 모임', value: 'ONCE' },
+  { label: '정기 모임', value: 'WEEKLY' },
+];
 
 export default function CreateGroupPage() {
   const [meetingName, setMeetingName] = useState('');
-  const [meetingType, setMeetingType] = useState('');
+  const [meetingType, setMeetingType] = useState<RoomType | ''>('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
   const router = useRouter();
+
+  useEffect(() => {
+    const user = loadStoredUser();
+    if (!user) {
+      router.replace('/');
+    }
+  }, [router]);
 
   const isFormValid = meetingName.trim() !== '' && meetingType !== '';
 
-  const handleNextClick = () => {
-    if (isFormValid) {
-      // TODO: API 연동하여 그룹 생성 후 해당 groupId로 이동 필요
-      const groupId = 'temp-group-id';
-      router.push(`/group/${groupId}/month`);
+  const handleNextClick = async () => {
+    if (!isFormValid) return;
+
+    const user = loadStoredUser();
+    if (!user) {
+      router.replace('/');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError('');
+
+    try {
+      const room = await createRoom({ name: meetingName.trim(), type: meetingType as RoomType });
+      await joinRoom(room.id, user.id);
+      router.push(`/group/${room.id}/month`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '모임 생성에 실패했어요.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -55,35 +84,37 @@ export default function CreateGroupPage() {
           <div className="flex flex-wrap gap-2">
             {meetingTypes.map((type) => (
               <button
-                key={type}
-                onClick={() => setMeetingType(type)}
+                key={type.value}
+                onClick={() => setMeetingType(type.value)}
                 className={`px-4 py-2 rounded-full text-sm font-semibold border
                   ${
-                    meetingType === type
+                    meetingType === type.value
                       ? 'bg-yellow-main text-black border-yellow-main'
                       : 'bg-gray-light text-gray-400 border-gray-light'
                   }`}
               >
-                {type}
+                {type.label}
               </button>
             ))}
           </div>
         </div>
+
+        {error && <p className="text-red-500 text-sm mt-4">{error}</p>}
       </main>
 
       {/* Bottom Button */}
       <footer className="pb-4">
         <button
           onClick={handleNextClick}
-          disabled={!isFormValid}
+          disabled={!isFormValid || isSubmitting}
           className={`w-full py-4 text-lg font-bold text-white rounded-lg
             ${
-              isFormValid
+              isFormValid && !isSubmitting
                 ? 'bg-gradient-to-r from-yellow-main to-yellow-light'
                 : 'bg-gray-medium'
             }`}
         >
-          다음
+          {isSubmitting ? '생성 중...' : '다음'}
         </button>
       </footer>
     </div>

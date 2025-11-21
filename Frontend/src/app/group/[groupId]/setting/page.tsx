@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Image from 'next/image';
 import { Pencil } from 'lucide-react';
@@ -14,32 +14,76 @@ import {
   DialogClose,
 } from '@/app/components/common/dialog';
 import Button from '@/app/components/common/button/Button';
-import { ParticipantSheet } from '@/app/components/common/ParticipantSheet'; // Import ParticipantSheet
-
+import { ParticipantSheet } from '@/app/components/common/ParticipantSheet';
 import SettingMenuItem from '@/app/components/common/SettingMenuItem';
-
+import { fetchRoom, fetchRoomUsers, leaveRoom, updateRoom } from '@/lib/api';
+import { loadStoredUser } from '@/lib/auth';
 
 export default function GroupSettingPage() {
   const router = useRouter();
   const params = useParams();
-  const groupId = params.groupId as string;
+  const groupId = Number(params.groupId);
+
+  if (Number.isNaN(groupId)) {
+    return <div className="p-4">잘못된 모임 정보입니다.</div>;
+  }
 
   const [isNameDialogOpen, setIsNameDialogOpen] = useState(false);
-  const [newGroupName, setNewGroupName] = useState('걸스나잇 해요'); // Placeholder
-  const [isParticipantSheetOpen, setIsParticipantSheetOpen] = useState(false); // State for Participant Sheet
+  const [newGroupName, setNewGroupName] = useState(''); 
+  const [isParticipantSheetOpen, setIsParticipantSheetOpen] = useState(false);
+  const [participants, setParticipants] = useState<{ id: number; nickname: string; email: string }[]>([]);
+  const [isLoadingParticipants, setIsLoadingParticipants] = useState(true);
+  const [error, setError] = useState('');
 
-  const handleSaveGroupName = () => {
-    console.log('Saving new group name:', newGroupName, 'for group', groupId);
-    // API call to save name would go here
-    setIsNameDialogOpen(false);
+  const user = useMemo(() => loadStoredUser(), []);
+
+  useEffect(() => {
+    if (!user) {
+      router.replace('/');
+      return;
+    }
+
+    const load = async () => {
+      try {
+        const [room, members] = await Promise.all([
+          fetchRoom(groupId),
+          fetchRoomUsers(groupId),
+        ]);
+        setNewGroupName(room.name);
+        setParticipants(members);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : '모임 정보를 불러오지 못했어요.');
+      } finally {
+        setIsLoadingParticipants(false);
+      }
+    };
+
+    load();
+  }, [groupId, router, user]);
+
+  const handleSaveGroupName = async () => {
+    try {
+      await updateRoom(groupId, newGroupName);
+      alert('그룹 이름을 저장했어요.');
+      setIsNameDialogOpen(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '그룹 이름 수정에 실패했어요.');
+    }
   };
 
-  const handleLeaveGroup = () => {
-    // eslint-disable-next-line no-alert
+  const handleLeaveGroup = async () => {
+    if (!user) {
+      router.replace('/');
+      return;
+    }
+
     if (window.confirm('정말로 모임을 나가시겠습니까?')) {
-      console.log('Leaving group', groupId);
-      // API call to leave group would go here
-      router.push('/group'); // Navigate back to group list
+      try {
+        await leaveRoom(groupId, user.id);
+        router.push('/group');
+      } catch (err) {
+        setError(err instanceof Error ? err.message : '모임 나가기에 실패했어요.');
+      }
     }
   };
 
@@ -48,6 +92,8 @@ export default function GroupSettingPage() {
       <TopBar title="모임 설정" />
 
       <main className="flex-1 overflow-y-auto p-4">
+        {error && <p className="text-sm text-red-500 mb-4">{error}</p>}
+
         {/* Group Info Section */}
         <section className="mb-8">
           <h2 className="text-sm text-gray-500 px-2 mb-2">그룹 정보</h2>
@@ -61,7 +107,7 @@ export default function GroupSettingPage() {
              <SettingMenuItem 
                 icon={<Image src="/images/icon_group_yellow.png" alt="" width={24} height={24} />}
                 title="참여자 보기"
-                onClick={() => setIsParticipantSheetOpen(true)} // Open participant sheet
+                onClick={() => setIsParticipantSheetOpen(true)}
              />
           </div>
         </section>
@@ -115,7 +161,12 @@ export default function GroupSettingPage() {
       </Dialog>
       
       {/* Participant Sheet */}
-      <ParticipantSheet open={isParticipantSheetOpen} onOpenChange={setIsParticipantSheetOpen} />
+      <ParticipantSheet
+        open={isParticipantSheetOpen}
+        onOpenChange={setIsParticipantSheetOpen}
+        participants={participants}
+        isLoading={isLoadingParticipants}
+      />
     </div>
   );
 }

@@ -54,11 +54,20 @@ interface ShareSheetProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   groupId: string;
+  inviteCode?: string;
 }
 
-export function ShareSheet({ open, onOpenChange, groupId }: ShareSheetProps) {
-  const shareLink = `https://www.moyeoyo.com/group/${groupId}`;
+export function ShareSheet({ open, onOpenChange, groupId, inviteCode }: ShareSheetProps) {
+  const [shareLink, setShareLink] = React.useState('');
   const [isCatVisible, setIsCatVisible] = React.useState(false);
+
+  React.useEffect(() => {
+    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://www.moyeoyo.com';
+    const link = inviteCode
+      ? `${origin}/group/${groupId}?inviteCode=${inviteCode}`
+      : `${origin}/group/${groupId}`;
+    setShareLink(link);
+  }, [groupId, inviteCode]);
 
   React.useEffect(() => {
     if (open) {
@@ -75,6 +84,7 @@ export function ShareSheet({ open, onOpenChange, groupId }: ShareSheetProps) {
 
 
   const handleCopy = () => {
+    if (!shareLink) return;
     navigator.clipboard.writeText(shareLink).then(() => {
       alert('링크가 복사되었습니다!');
     }).catch(err => {

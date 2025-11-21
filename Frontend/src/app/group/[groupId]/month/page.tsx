@@ -1,10 +1,13 @@
 'use client';
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { isSameDay } from "date-fns";
 import TopBar from "@/app/components/common/topBar";
 import ScheduleCalendar from "@/app/components/calendar/ScheduleCalendar";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
+import { fetchRoomMonthlyUnavailable, saveRoomMonthlyUnavailable } from "@/lib/api";
+import { formatDateToISO, parseISODate } from "@/lib/utils";
+import { loadStoredUser } from "@/lib/auth";
 
 export default function MonthPage() {
   const params = useParams();
@@ -14,16 +17,32 @@ export default function MonthPage() {
   const groupId = params?.groupId as string;
   const fromSettings = searchParams.get('from') === 'settings';
 
-  if (!groupId) {
-    return <div>Loading or Invalid Group ID...</div>;
-  }
-
-  // State for the calendar
   const [month, setMonth] = useState(new Date()); 
-  const [unavailableDays, setUnavailableDays] = useState<Date[]>([
-      new Date("2025-11-10"),
-      new Date("2025-11-11"),
-  ]); 
+  const [unavailableDays, setUnavailableDays] = useState<Date[]>([]); 
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  const user = useMemo(() => loadStoredUser(), []);
+
+  useEffect(() => {
+    if (!user) {
+      router.replace('/');
+      return;
+    }
+
+    const load = async () => {
+      try {
+        const dates = await fetchRoomMonthlyUnavailable(user.id, Number(groupId));
+        setUnavailableDays(dates.map((d) => parseISODate(d)));
+      } catch (err) {
+        setError(err instanceof Error ? err.message : '불가능 날짜를 불러오지 못했어요.');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    load();
+  }, [router, user, groupId]);
 
   const handleDayClick = (day: Date) => {
     const today = new Date();
@@ -40,11 +59,27 @@ export default function MonthPage() {
     }
   };
   
-  const handleNextClick = () => {
-    console.log("Selected unavailable days for group", groupId);
-    console.log(unavailableDays.map(d => d.toLocaleDateString()));
-    router.push(`/group/${groupId}`);
+  const handleNextClick = async () => {
+    if (!user) {
+      router.replace('/');
+      return;
+    }
+
+    try {
+      await saveRoomMonthlyUnavailable(
+        user.id,
+        Number(groupId),
+        unavailableDays.map((d) => formatDateToISO(d))
+      );
+      router.push(`/group/${groupId}`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : '저장에 실패했어요.');
+    }
   };
+
+  if (!groupId) {
+    return <div>Loading or Invalid Group ID...</div>;
+  }
 
   return (
     <div className="flex flex-col h-full bg-white">
@@ -61,10 +96,14 @@ export default function MonthPage() {
           </p>
         </div>
 
+        {isLoading && <p className="text-gray-500">불러오는 중...</p>}
+        {error && <p className="text-sm text-red-500">{error}</p>}
+
         <ScheduleCalendar
           month={month}
           onMonthChange={setMonth}
           selectedDays={unavailableDays}
+          unavailableDays={unavailableDays}
           onDayClick={handleDayClick}
         />
         
