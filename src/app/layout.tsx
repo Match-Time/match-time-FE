@@ -2,6 +2,7 @@ import type {Metadata} from 'next';
 import './globals.css';
 import ConditionalBottomBar from './components/common/ConditionalBottomBar';
 import TopBar from './components/common/topBar';
+import 'react-day-picker/dist/style.css';
 
 // 메타 데이터
 export const metadata: Metadata = {

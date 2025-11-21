@@ -2,13 +2,14 @@
 
 import {DayPicker} from 'react-day-picker';
 import {ko} from 'date-fns/locale';
-import 'react-day-picker/style.css'; // MUST import for base structure
+import 'react-day-picker/dist/style.css';
 
 interface ScheduleCalendarProps {
   selectedDays: Date[];
   onDayClick: (day: Date) => void;
   month: Date;
   onMonthChange: (month: Date) => void;
+  isEditing: boolean;
 }
 
 export default function ScheduleCalendar({
@@ -16,14 +17,11 @@ export default function ScheduleCalendar({
   onDayClick,
   month,
   onMonthChange,
+  isEditing,
 }: ScheduleCalendarProps) {
-  const handleDayClick = (day: Date) => {
-    onDayClick(day);
-  };
-
   const modifiers = {
-    saturday: {dayOfWeek: [6] as number[]},
-    sunday: {dayOfWeek: [0] as number[]},
+    saturday: {dayOfWeek: [6]},
+    sunday: {dayOfWeek: [0]},
   };
 
   const modifiersClassNames = {
@@ -36,34 +34,40 @@ export default function ScheduleCalendar({
       locale={ko}
       mode="multiple"
       selected={selectedDays}
-      onDayClick={handleDayClick}
+      onDayClick={onDayClick}
       month={month}
       onMonthChange={onMonthChange}
-      showOutsideDays
+      showOutsideDays={false}
       modifiers={modifiers}
       modifiersClassNames={modifiersClassNames}
       classNames={{
-        // Override container styles
-        root: 'bg-white p-4 rounded-lg shadow',
+        root: 'w-full',
 
-        // Caption: < Month >
-        caption:
-          'flex items-center justify-center relative text-yellow-main mb-4',
-        caption_label: 'text-xl font-bold',
-        nav_button_previous: 'absolute left-0 text-2xl',
-        nav_button_next: 'absolute right-0 text-2xl',
+        /* Month Header */
+        caption: 'flex items-center justify-start mb-4 relative px-1',
+        caption_label: 'text-xl font-bold text-yellow-main',
+        nav: 'absolute right-1 flex items-center gap-1',
+        nav_button: 'text-yellow-main text-xl',
 
-        // Head: Weekdays
-        head_cell: 'text-center text-sm font-semibold text-gray-dark pb-2',
+        /* Weekday Row */
+        head_row: 'grid grid-cols-7 mb-2',
+        head_cell: 'text-center text-sm font-semibold text-gray-dark',
 
-        // Day
-        day: 'h-10 w-10 rounded-md transition-colors bg-gray-background',
-        day_selected: '!bg-yellow-main !text-black [border-radius:0.375rem]',
-        day_today: 'font-bold border-2 border-yellow-main', // Modified to include border
-        day_outside: '!text-gray-light',
+        /* Week Rows */
+        row: 'grid grid-cols-7', // ⭐ 무조건 grid-cols-7 유지해야 함
 
-        // Remove default button outlines and styles
-        button: 'border-none',
+        /* Day Cells */
+        day: `
+    h-11 w-11 m-1
+    flex items-center justify-center
+    text-sm rounded-lg bg-gray-background
+    ${isEditing ? 'cursor-pointer' : ''}
+  `,
+        day_selected: '!bg-yellow-main !text-black font-bold',
+        day_today: 'border-2 border-yellow-main rounded-lg font-bold',
+        day_outside: 'hidden',
+
+        button: 'border-none outline-none',
       }}
     />
   );

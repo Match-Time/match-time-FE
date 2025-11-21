@@ -97,7 +97,7 @@ export default function GroupPage() {
                   <h3 className="font-bold text-yellow-main">{room.title}</h3>
                   <div className="flex items-center space-x-2 text-sm text-gray-400 mt-1">
                     {/* 방 특징 */}
-                    <Tag text={room.tags[0]} textColor="text-white" />
+                    <Tag text={room.tags[0]} textColorClass="text-white" />
                     {/* 참여 인원 수 */}
                     <span className="text-gray-dark">
                       {room.participantCount}명 참여 중

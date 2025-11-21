@@ -3,7 +3,7 @@
 import {useState} from 'react';
 import {isSameDay} from 'date-fns';
 import Image from 'next/image';
-import {Pencil, Check} from 'lucide-react';
+import {Pencil, Check, ChevronRight} from 'lucide-react';
 import ScheduleCalendar from '@/app/components/calendar/ScheduleCalendar';
 
 export default function MyMonthPage() {
@@ -45,26 +45,31 @@ export default function MyMonthPage() {
   return (
     <div className="flex flex-col h-full bg-white">
       {/* Custom Header */}
-      <header className="flex items-center justify-between px-4 h-14 bg-white border-b">
-        <h1 className="text-xl font-bold">내 일정표</h1>
+      <header className="px-4 h-14 py-4 bg-white flex items-center">
+        <h1 className="text-3xl font-bold">내 고정 일정표</h1>
+      </header>
+
+      {/* Header 바로 아래 버튼 */}
+      <div className="flex justify-end px-4 mt-3">
         <button
           onClick={handleEditToggle}
           className={`flex items-center px-3 py-1.5 rounded-full text-sm font-semibold transition-colors ${
             isEditing
               ? 'bg-green-light text-green-main'
-              : 'bg-yellow-main text-black'
+              : 'bg-yellow-main text-white'
           }`}
         >
           {isEditing ? (
             <Check size={16} className="mr-1" />
           ) : (
-            <Pencil size={16} className="mr-1" />
+            <Pencil size={16} className="mr-2" />
           )}
-          {isEditing ? '고정표 수정 완료' : '고정표 수정하기'}
+          {isEditing ? '일정 수정 완료' : '일정 수정하기'}
+          {!isEditing && <ChevronRight size={16} className="ml-2" />}
         </button>
-      </header>
+      </div>
 
-      <main className="flex-1 flex flex-col p-4">
+      <main className="flex-1 flex flex-col">
         <ScheduleCalendar
           month={month}
           onMonthChange={setMonth}

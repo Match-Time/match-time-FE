@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+
 @font-face {
   font-family: "Pretendard";
   src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/pretendard@1.0/Pretendard-Thin.woff2") format("woff2");
@@ -171,48 +172,18 @@ body {
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 }
-/* ================================
-   react-day-picker Table → Grid 변환
-================================ */
 
+/* react-day-picker 기본 grid 유지 */
 .rdp-table {
-  display: block !important;
-}
-
-.rdp-tbody {
-  display: grid !important;
-  grid-template-columns: repeat(7, 1fr) !important;
-  gap: 8px !important;
+  display: table !important;
+  width: 100%;
 }
 
 .rdp-row {
-  display: contents !important;
+  display: table-row !important;
 }
 
 .rdp-cell {
-  display: flex !important;
-  justify-content: center;
-  align-items: center;
-}
-
-/* Day 버튼을 우리가 원하는 네모 박스로 */
-.rdp-button {
-  width: 44px;
-  height: 44px;
-  border-radius: 10px;
-  background: #f3f3f3;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.rdp-button:hover {
-  background: #e2e2e2;
-}
-
-/* 선택된 날짜 */
-.rdp-day_selected {
-  background: linear-gradient(to bottom, #fbd34e, #ffcc00) !important;
-  color: black !important;
-  border-radius: 10px !important;
+  display: table-cell !important;
+  vertical-align: middle;
 }
