@@ -30,7 +30,7 @@ export default function CreateGroupPage() {
           <Image
             src="/images/ic_back.png"
             alt="뒤로가기"
-            width={15}
+            width={24}
             height={30}
           />
         </Link>
@@ -83,11 +83,11 @@ focus:outline-none focus:border-transparent focus:ring-2 focus:ring-yellow-main"
           <button
             onClick={handleNextClick}
             disabled={!isFormValid}
-            className={`w-full py-4 text-lg font-bold text-white rounded-xl
+            className={`w-full py-4 text-base font-semibold text-white rounded-xl
                     ${
                       isFormValid
                         ? 'bg-gradient-to-r from-yellow-main to-yellow-light'
-                        : 'bg-gray-medium'
+                        : 'bg-gray-light'
                     }`}
           >
             다음

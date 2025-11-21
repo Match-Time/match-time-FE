@@ -2,17 +2,14 @@ import React from "react";
 
 export type TagProps = {
   text: string;
-  color?: string;
-  textColor?: string;
+  bgColorClass?: string; // e.g., "bg-yellow-light"
+  textColorClass?: string; // e.g., "text-yellow-dark-text"
 };
 
-const Tag = ({ text, color = "#F0C600", textColor = "text-black" }: TagProps) => {
+const Tag = ({ text, bgColorClass = "bg-[#F0C600]", textColorClass = "text-black" }: TagProps) => {
   return (
     <span
-      className={`px-2 py-1 rounded-full text-xs ${textColor}`}
-      style={{
-        backgroundColor: color,
-      }}
+      className={`px-2 py-1 rounded-full text-xs ${bgColorClass} ${textColorClass}`}
     >
       {text}
     </span>
