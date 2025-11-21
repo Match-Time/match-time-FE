@@ -55,23 +55,27 @@ export default function MyPage() {
           <Image
             src="/images/ic_calender.png"
             alt=""
-            width={60}
-            height={60}
-            className="absolute -left-2 top-1/2 transform -translate-y-1/2 z-0 opacity-70"
+            width={40}
+            height={40}
+            className="absolute left-4 top-4 z-0 opacity-70"
           />
           <Image
             src="/images/ic_clock.png"
             alt=""
-            width={50}
-            height={50}
-            className="absolute -right-2 top-1/2 transform -translate-y-1/2 z-0 opacity-70"
+            width={30}
+            height={30}
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 z-0 opacity-70"
           />
           <div className="relative z-10 w-full text-center">
-            <h3 className="font-bold text-lg">기본 시간표를 설정해 보세요!</h3>
-            <p className="text-sm mb-4">모든 방에 불러올 수 있어요.</p>
+            <h3 className="font-bold text-white text-lg">
+              기본 시간표를 설정해 보세요!
+            </h3>
+            <p className="text-sm text-white mb-2">
+              모든 방에 불러올 수 있어요.
+            </p>
             <button
               onClick={() => router.push('/month')}
-              className="px-6 py-2 bg-white rounded-full text-sm font-bold shadow-md"
+              className="w-full px-6 py-2 bg-white text-yellow-dark rounded-full text-xs font-bold"
             >
               설정하러 가기
             </button>
