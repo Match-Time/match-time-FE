@@ -1,8 +1,8 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import {useRouter} from 'next/navigation';
 import Image from 'next/image';
-import { Pencil, UserCog, Info } from 'lucide-react';
+import {Pencil, UserCog, Info} from 'lucide-react';
 import SettingMenuItem from '@/app/components/common/SettingMenuItem';
 
 export default function MyPage() {
@@ -11,26 +11,25 @@ export default function MyPage() {
   // Mock user data
   const userData = {
     name: '이모임',
-    avatar: '/images/img_animal.png',
+    avatar: '/images/ic_profile_cat.png',
   };
 
   return (
     <div className="flex flex-col h-full bg-white p-4">
       {/* Profile Section */}
-      <section className="flex flex-col items-center pt-8 pb-12">
-        <div className="relative">
+      <section className="flex flex-col items-center pt-8 pb-8">
+        <div className="relative pr-2">
           <Image
             src={userData.avatar}
             alt="User Avatar"
-            width={90}
-            height={90}
-            className="rounded-full border-4 border-yellow-main"
+            width={133}
+            height={118}
+            className="rounded-full"
           />
-          <button className="absolute bottom-0 right-0 bg-yellow-main p-1.5 rounded-full border-2 border-white">
-            <Pencil size={16} className="text-black" />
-          </button>
         </div>
-        <h1 className="mt-4 text-xl font-bold">{userData.name}</h1>
+        <h1 className=" text-xl mt-1 font-bold text-gray-dark">
+          {userData.name}
+        </h1>
       </section>
 
       {/* Settings Menu */}
@@ -56,7 +55,7 @@ export default function MyPage() {
           <div className="relative z-10">
             <h3 className="font-bold text-lg">기본 시간표를 설정해 보세요!</h3>
             <p className="text-sm mb-4">모든 방에 불러올 수 있어요.</p>
-            <button 
+            <button
               onClick={() => router.push('/month')}
               className="px-6 py-2 bg-white rounded-full text-sm font-bold shadow-md"
             >
