@@ -1,13 +1,13 @@
 'use client';
 
-import TopBar from '@/app/components/common/topBar';
-// import BottomNav from "@/app/components/common/bottomBar"; // This is in RootLayout
-import Button from '@/app/components/common/button/Button';
 import Image from 'next/image';
 import {useRouter, useParams} from 'next/navigation';
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import Tag from '@/app/components/common/Tag';
 import {ShareSheet} from '@/app/components/common/ShareSheet';
+import Link from 'next/link';
+import Button from '@/app/components/common/button/Button';
+import {motion, AnimatePresence} from 'framer-motion';
 
 export default function GroupDetailPage() {
   const router = useRouter();
@@ -15,7 +15,9 @@ export default function GroupDetailPage() {
   const groupId = params.groupId as string;
 
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [confirmedDate, setConfirmedDate] = useState<string | null>(null);
   const [isShareSheetOpen, setIsShareSheetOpen] = useState(false);
+  const [isBouncing, setIsBouncing] = useState(false);
 
   // Mock data as per request
   const groupInfo = {
@@ -29,11 +31,34 @@ export default function GroupDetailPage() {
     {id: '3', date: '2025.12.05', dayOfWeek: '금요일', availableCount: 3},
   ];
 
+  const [displayedDates, setDisplayedDates] = useState(recommendedDates);
+
+  const maxAvailableCount = Math.max(
+    ...recommendedDates.map((item) => item.availableCount)
+  );
+
   const handleConfirmDate = () => {
     if (selectedDate) {
+      setConfirmedDate(selectedDate);
       console.log(`Confirming date ${selectedDate} for group ${groupId}`);
-      // API call would go here
-      alert(`모임 날짜가 ${selectedDate}로 확정되었습니다!`);
+
+      if (displayedDates[0]?.date === selectedDate) {
+        setIsBouncing(true);
+        setTimeout(() => setIsBouncing(false), 400);
+      } else {
+        // API call would go here
+        setDisplayedDates((prevDates) => {
+          const confirmedItem = prevDates.find(
+            (item) => item.date === selectedDate
+          );
+          if (!confirmedItem) return prevDates;
+
+          const otherItems = prevDates.filter(
+            (item) => item.date !== selectedDate
+          );
+          return [confirmedItem, ...otherItems];
+        });
+      }
     }
   };
 
@@ -47,13 +72,24 @@ export default function GroupDetailPage() {
 
   return (
     <div className="flex flex-col h-full bg-white">
-      <TopBar title="모임 세부 정보" />
+      {/* Top Bar */}
+      <header className="relative flex items-center justify-center mb-4 px-4 h-14">
+        <Link href="/group" className="absolute left-4">
+          <Image
+            src="/images/ic_back.png"
+            alt="뒤로가기"
+            width={24}
+            height={24}
+          />
+        </Link>
+        <h1 className="text-lg font-semibold">{groupInfo.name}</h1>
+      </header>
 
-      <main className="flex-1 overflow-y-auto px-4 pt-4">
+      <main className="flex-1 overflow-y-auto pt-4">
         {/* Group Info Header */}
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center mb-3">
           <div>
-            <h1 className="text-xl font-semibold text-black">
+            <h1 className="text-xl font-semibold mb-1 text-black">
               {groupInfo.name}
             </h1>
             <p className="text-sm text-gray-medium">
@@ -86,82 +122,125 @@ export default function GroupDetailPage() {
             </button>
           </div>
         </div>
-        <div className="w-full -mx-4 h-[6px] bg-gray-background mt-3 mb-6" />
+        <div className="h-[6px] bg-gray-background mt-1 mb-6 relative left-1/2 -translate-x-1/2" />
 
         {/* Recommended Dates Section */}
         <div>
-          <h2 className="text-lg font-semibold text-black">추천 날짜 목록</h2>
-          <p className="text-sm text-gray-medium mb-4">
+          <h2 className="text-lg font-semibold mb-1 text-black">
+            추천 날짜 목록
+          </h2>
+          <p className="text-sm text-gray-medium mb-8">
             날짜를 선택하면 모임 날짜로 확정할 수 있어요
           </p>
 
-          <div className="space-y-3">
-            {recommendedDates.map((item) => (
-              <label
-                key={item.id}
-                htmlFor={item.id}
-                className="block rounded-xl p-[2px] w-full h-[107px]
-bg-gradient-to-r from-yellow-300 to-yellow-500 cursor-pointer"
-              >
-                <div
-                  className={`flex items-center justify-between p-4 rounded-xl transition-colors w-full h-full ${
-                    selectedDate === item.date ? 'bg-yellow-50' : 'bg-white'
-                  }`}
-                >
-                  <div className="flex items-center">
-                    <input
-                      type="radio"
-                      id={item.id}
-                      name="recommendedDate"
-                      value={item.date}
-                      checked={selectedDate === item.date}
-                      onChange={() => setSelectedDate(item.date)}
-                      className="hidden"
-                    />
-                    <div>
-                      <p className="font-bold text-2xl">{item.date}</p>
-                      <p className="text-sm text-gray-dark font-semibold">
-                        {item.dayOfWeek}
-                      </p>
-                    </div>
-                  </div>
+          <div className="space-y-8">
+            <AnimatePresence>
+              {displayedDates.map((item, index) => {
+                const isMax = item.availableCount === maxAvailableCount;
+                const bgColorClass = isMax
+                  ? 'bg-yellow-light'
+                  : 'bg-green-light';
+                const textColorClass = isMax
+                  ? 'text-yellow-dark-text'
+                  : 'text-green-main';
 
-                  <div className="flex items-center">
-                    <Tag text={`${item.availableCount}명 가능 날짜`} />
+                return (
+                  <motion.div
+                    key={item.id}
+                    layout
+                    initial={{opacity: 0}}
+                    animate={
+                      index === 0 && isBouncing
+                        ? {opacity: 1, rotate: [0, -1.5, 1.5, -1.5, 1.5, 0]}
+                        : {opacity: 1, rotate: 0}
+                    }
+                    transition={
+                      index === 0 && isBouncing
+                        ? {duration: 0.5, ease: 'easeInOut'}
+                        : undefined
+                    }
+                    exit={{opacity: 0}}
+                  >
+                    <label
+                      htmlFor={item.id}
+                      className="block rounded-xl p-[2px] w-full h-[107px]
+  bg-gradient-to-r from-yellow-300 to-yellow-500 cursor-pointer"
+                    >
+                      <div
+                        className={`flex items-center justify-between p-4 rounded-xl transition-colors w-full h-full ${
+                          selectedDate === item.date
+                            ? 'bg-yellow-50 shadow-lg'
+                            : 'bg-white'
+                        }`}
+                      >
+                        <div className="flex items-center">
+                          <input
+                            type="radio"
+                            id={item.id}
+                            name="recommendedDate"
+                            value={item.date}
+                            checked={selectedDate === item.date}
+                            onChange={() => setSelectedDate(item.date)}
+                            className="hidden"
+                          />
+                          <div>
+                            <p className="font-bold text-2xl">{item.date}</p>
+                            <p className="text-sm text-gray-dark font-semibold">
+                              {item.dayOfWeek}
+                            </p>
+                          </div>
+                        </div>
 
-                    {selectedDate === item.date ? (
-                      <Image
-                        src="/images/ic_check_selected.png"
-                        alt="선택됨"
-                        width={25}
-                        height={25}
-                        className="ml-4"
-                      />
-                    ) : (
-                      <div className="w-6 h-6 ml-4 border-2 border-gray-light rounded-full"></div>
+                        <div className="flex items-center">
+                          <Tag
+                            text={`${item.availableCount}명 가능 날짜`}
+                            bgColorClass={bgColorClass}
+                            textColorClass={textColorClass}
+                          />
+
+                          {selectedDate === item.date ? (
+                            <Image
+                              src="/images/ic_check_selected.png"
+                              alt="선택됨"
+                              width={25}
+                              height={25}
+                              className="ml-4"
+                            />
+                          ) : (
+                            <div className="w-6 h-6 ml-4 border-2 border-gray-light rounded-full"></div>
+                          )}
+                        </div>
+                      </div>
+                    </label>
+                    {confirmedDate === item.date && (
+                      <div className="bg-gradient-to-l from-yellow-main to-yellow-light text-white text-center text-sm py-2 rounded-lg mt-2">
+                        해당 날짜가 모임 확정 날짜로 선정되었어요!
+                      </div>
                     )}
-                  </div>
-                </div>
-              </label>
-            ))}
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
           </div>
         </div>
       </main>
 
-      {/* Footer Button */}
-      <footer className="p-4 bg-white border-t">
-        <Button
-          onClick={handleConfirmDate}
-          disabled={!selectedDate}
-          className={`w-full py-3 text-lg font-bold rounded-lg transition-colors ${
-            selectedDate
-              ? 'bg-yellow-main text-black'
-              : 'bg-gray-200 text-gray-400'
-          }`}
-        >
-          이 날짜로 확정하기
-        </Button>
-      </footer>
+      {/* 하단 버튼 */}
+      <div className="fixed bottom-8 left-0 right-0">
+        <footer className="w-full max-w-sm mx-auto bg-white px-4 pb-4">
+          <Button
+            onClick={handleConfirmDate}
+            disabled={!selectedDate}
+            className={`w-full py-4 text-base font-semibold text-white rounded-xl transition-colors ${
+              selectedDate
+                ? 'bg-gradient-to-r from-yellow-main to-yellow-light'
+                : 'bg-gray-light'
+            }`}
+          >
+            이 날짜로 확정하기
+          </Button>
+        </footer>
+      </div>
 
       {/* Share Sheet Component */}
       <ShareSheet
