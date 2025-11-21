@@ -171,67 +171,16 @@ body {
   scrollbar-width: thin;
   scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 }
-/* ================================
-   react-day-picker Table → Grid 변환
-================================ */
 
-.rdp-table {
-  display: block !important;
+/* DayPicker focus outline 색상을 노랑으로 강제 */
+.rdp-button:focus-visible {
+  outline: 2px solid #e5c242 !important;
+  box-shadow: 0 0 0 4px #e5c24233 !important;
 }
 
-.rdp-tbody {
-  display: grid !important;
-  grid-template-columns: repeat(7, 1fr) !important;
-  gap: 10px !important;
-}
-
-.rdp-row {
-  display: contents !important;
-}
-
-.rdp-cell {
-  display: flex !important;
-  justify-content: center;
-  align-items: center;
-}
-
-/* Day 버튼을 우리가 원하는 네모 박스로 */
-.rdp-button {
-  width: 46px;
-  height: 46px;
-  border-radius: 12px;
-  background: #f5f5f5;
-  color: #222;
-  font-weight: 500;
-  border: none;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: background-color 0.2s ease;
-}
-
-.rdp-button:hover {
-  background: #ededed;
-}
-
-/* 선택된 날짜 */
-.rdp-day_selected {
-  background: linear-gradient(180deg, #f4d35e 0%, #e5c242 100%) !important;
-  color: #fff !important;
-  border-radius: 12px !important;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-}
-
+/* 오늘 날짜 효과 제거 */
 .rdp-day_today {
-  border: 2px solid #e5c242 !important;
-  background: #fff !important;
-  color: #222 !important;
-  border-radius: 12px !important;
-}
-
-.rdp-day_disabled {
-  background: #f2f2f2 !important;
-  color: #c5c5c5 !important;
-  cursor: not-allowed;
-  opacity: 0.65;
+  border: none !important;
+  box-shadow: none !important;
+  background: inherit !important;
 }

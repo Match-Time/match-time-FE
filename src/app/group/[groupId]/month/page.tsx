@@ -12,6 +12,18 @@ import {
 } from '@/lib/api';
 import {getUser} from '@/lib/userStorage';
 
+const toLocalISO = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+const fromISO = (value: string) => {
+  const [y, m, d] = value.split('-').map(Number);
+  return new Date(y, (m || 1) - 1, d || 1);
+};
+
 export default function MonthPage() {
   const params = useParams();
   const router = useRouter();
@@ -45,11 +57,7 @@ export default function MonthPage() {
             : await fetchUserMonthlyUnavailable(stored.id);
 
         setUnavailableDays(
-          baseDates.map((d) => {
-            const dt = new Date(d);
-            dt.setHours(0, 0, 0, 0);
-            return dt;
-          }),
+          baseDates.map((d) => fromISO(d)),
         );
         setError(null);
       } catch (err: any) {
@@ -83,13 +91,8 @@ export default function MonthPage() {
     setSaving(true);
     try {
       const payload = unavailableDays
-        .map((d) => {
-          const copy = new Date(d);
-          copy.setHours(0, 0, 0, 0);
-          return copy;
-        })
         .sort((a, b) => a.getTime() - b.getTime())
-        .map((d) => d.toISOString().split('T')[0]);
+        .map((d) => toLocalISO(d));
       await saveRoomMonthlyUnavailable(stored.id, groupIdNum, payload);
       setError(null);
       router.push(`/group/${groupId}`);
@@ -134,12 +137,8 @@ export default function MonthPage() {
 
         <div className="flex flex-col items-start pt-4 text-sm mt-4 pl-4">
           <div className="flex items-center mb-2">
-            <span className="w-4 h-4 rounded-full bg-yellow-main mr-2"></span>
+            <span className="w-4 h-4 rounded-full border-2 border-[#3b7cff] mr-2"></span>
             <span className="text-gray-dark">불가능한 날짜</span>
-          </div>
-          <div className="flex items-center">
-            <span className="w-4 h-4 rounded-full border-2 border-yellow-main mr-2"></span>
-            <span className="text-gray-dark">오늘 날짜</span>
           </div>
         </div>
       </main>
