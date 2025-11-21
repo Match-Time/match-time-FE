@@ -1,7 +1,5 @@
 'use client';
 
-'use client';
-
 import {useState} from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -18,7 +16,9 @@ const meetingTypes = [
 
 export default function CreateGroupPage() {
   const [meetingName, setMeetingName] = useState('');
-  const [meetingType, setMeetingType] = useState<(typeof meetingTypes)[number]['value'] | ''>('');
+  const [meetingType, setMeetingType] = useState<
+    (typeof meetingTypes)[number]['value'] | ''
+  >('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
@@ -56,7 +56,7 @@ export default function CreateGroupPage() {
           <Image
             src="/images/ic_back.png"
             alt="뒤로가기"
-            width={24}
+            width={18}
             height={30}
           />
         </Link>

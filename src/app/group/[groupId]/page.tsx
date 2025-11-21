@@ -108,7 +108,7 @@ export default function GroupDetailPage() {
 
   const maxAvailableCount = useMemo(
     () => Math.max(0, ...displayedDates.map((item) => item.availableCount)),
-    [displayedDates],
+    [displayedDates]
   );
 
   const handleConfirmDate = async () => {
@@ -213,7 +213,9 @@ export default function GroupDetailPage() {
         <div className="h-[6px] bg-gray-background mt-1 mb-6 relative left-1/2 -translate-x-1/2" />
 
         <div>
-          <h2 className="text-lg font-semibold mb-1 text-black">추천 날짜 목록</h2>
+          <h2 className="text-lg font-semibold mb-1 text-black">
+            추천 날짜 목록
+          </h2>
           <p className="text-sm text-gray-medium mb-8">
             날짜를 선택하면 모임 날짜로 확정할 수 있어요
           </p>
@@ -227,7 +229,9 @@ export default function GroupDetailPage() {
               <AnimatePresence>
                 {displayedDates.map((item, index) => {
                   const isMax = item.availableCount === maxAvailableCount;
-                  const bgColorClass = isMax ? 'bg-yellow-light' : 'bg-green-light';
+                  const bgColorClass = isMax
+                    ? 'bg-yellow-light'
+                    : 'bg-green-light';
                   const textColorClass = isMax
                     ? 'text-yellow-dark-text'
                     : 'text-green-main';
