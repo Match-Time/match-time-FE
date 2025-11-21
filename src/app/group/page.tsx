@@ -134,7 +134,10 @@ export default function GroupPage() {
                         {room.name}
                       </h3>
                       <div className="flex items-center space-x-2 text-sm text-gray-400 mt-1">
-                        <Tag text={typeLabel[room.type]} />
+                        <Tag
+                          text={typeLabel[room.type]}
+                          textColorClass="text-white"
+                        />
                         <span className="text-gray-dark">
                           {participantCount}명 참여 중
                         </span>
