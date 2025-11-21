@@ -20,11 +20,12 @@ module.exports = {
         scrollRight: 'scrollRight linear infinite',
       },
       fontFamily: {
-        suit: ['SUIT-Regular', 'sans-serif'],
+        suit: ['Pretendard', 'sans-serif'],
         nunito: ['Nunito"', 'sans-serif'],
         onepick: ['"YOnepickTTF-Bold"', 'sans-serif'],
       },
       colors: {
+        'yellow-dark-text': '#9B8000',
         'yellow-main': '#F0C600',
         'yellow-light': '#FFE983',
         'yellow-gradient': '#FFD301',

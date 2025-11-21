@@ -20,7 +20,7 @@ const SettingMenuItem = ({
   >
     <div className="mr-4 w-6 h-6 flex items-center justify-center">{icon}</div>
     <div className="flex-1">
-      <p className="font-semibold text-gray-800">{title}</p>
+      <p className="font-semibold text-gray-dark">{title}</p>
       {subtitle && <p className="text-sm text-gray-500">{subtitle}</p>}
     </div>
     <Image src="/images/ic_next.png" alt="go" width={12} height={12} />
